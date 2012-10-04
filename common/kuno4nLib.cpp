@@ -33,6 +33,7 @@ long long _2to10(string s);
 string _10to2(long long l);
 long long Nto10(int N, string s);
 string _10toN(long long l, int N);
+bool isPrime(long long l)
 
 //--------------------------------
 // lが2のべき乗であれば、その指数を返す。0乗もあり。
@@ -136,6 +137,19 @@ string _10toN(long long l, int N){
     return res;
 }
 
+//--------------------------------
+//素数判定。
+// l：0以上の整数
+bool isPrime(long long l)
+{
+    if(l==0 || l==1 ) return false;
+    if(l==2) return true;
+    if(l%2==0) return false;
+    for(int i=3;i<=l/2;i+=2)
+        if(l%i == 0 )
+            return false;
+    return true; 
+}
 
 
 namespace unittest {
