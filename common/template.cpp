@@ -5,6 +5,7 @@
 #include <cmath>
 #include <ctime>
 #include <iostream>
+#include <sstream>
 #include <cstring>
 #include <vector>
 #include <set>
@@ -19,6 +20,7 @@ using namespace std;
 #define PII pair < int, int >
 #define LL long long
 #define FOR(i,a,b) for (int i = (a); i < (b); i++)
+#define REP(i,n) FOR(i,0,n)
 #define FIT(it,v) for (typeof(v.begin()) it = v.begin(); it != v.end(); it++)
 #define OUT(A) std::cout << #A << '='<<A << std::endl;
 
