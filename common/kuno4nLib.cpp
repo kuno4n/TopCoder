@@ -261,7 +261,7 @@ namespace unittest {
                 //if (s.find("ag") == -1) OUT("1");
 
 				string ss("ababacccddaa");
-				set<char> sc(ALL(ss));
+				set<char> sc(ALL(ss)); // イテレータで初期生成できる
 				OUT(SZ(sc));
                 return 1;
             }
@@ -281,11 +281,19 @@ namespace unittest {
                 cout << endl;
                 //int tmp = find(ALL(a), 50);
 
-				VI b(5);
+				VI b(5); // 最初に要素数決定　いきなりb[3]とかできる
 				OUT(b[2]);
 				OUT(b[4]);
 				OUT(b[5]);
 				OUT(b[6]);
+				
+                cout << endl;
+				int c[4] = {4,2,10,5};
+				VI d(c,&c[3]); //こんな初期化も出来る
+				d.insert(d.begin(), 6); //先頭にinsert
+                FIT(it, d) OUT(*it);
+
+
                 return 1;
             }
             case 999 : {
