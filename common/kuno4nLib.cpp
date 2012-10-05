@@ -5,6 +5,7 @@
 #include <cmath>
 #include <ctime>
 #include <iostream>
+#include <algorithm>
 #include <sstream>
 #include <cstring>
 #include <vector>
@@ -23,7 +24,7 @@ using namespace std;
 #define REP(i,n) FOR(i,0,n)
 #define ALL(v) (v).begin(), (v).end()
 #define FIT(it,v) for (typeof((v).begin()) it = (v).begin(); it != (v).end(); it++)
-#define OUT(A) std::cout << #A << '='<<A << std::endl;
+#define OUT(A) cout << #A << " = "<< A << endl
 
 int _isPow2(long long l);
 bool isPow2(long long l);
@@ -33,7 +34,7 @@ long long _2to10(string s);
 string _10to2(long long l);
 long long Nto10(int N, string s);
 string _10toN(long long l, int N);
-bool isPrime(long long l)
+bool isPrime(long long l);
 
 //--------------------------------
 // lが2のべき乗であれば、その指数を返す。0乗もあり。
@@ -251,16 +252,20 @@ namespace unittest {
                 OUT(_10toN(1, 8));
                 return 1;
             }
-            case 8 : {
+            case 8 : {// string
                 string s("abcdefg");
                 OUT(s.find("c"));
                 OUT(s.find("def"));
                 int a = s.find("df");
                 OUT(a);
                 //if (s.find("ag") == -1) OUT("1");
+
+				string ss("ababacccddaa");
+				set<char> sc(ALL(ss));
+				OUT(SZ(sc));
                 return 1;
             }
-            case 9 : {
+            case 9 : {// vector
                 VI a;
                 a.PB(4);
                 a.PB(-100);
@@ -275,10 +280,12 @@ namespace unittest {
                 FIT(it, a) OUT(*it);
                 cout << endl;
                 //int tmp = find(ALL(a), 50);
-                
-                
-                
-                
+
+				VI b(5);
+				OUT(b[2]);
+				OUT(b[4]);
+				OUT(b[5]);
+				OUT(b[6]);
                 return 1;
             }
             case 999 : {

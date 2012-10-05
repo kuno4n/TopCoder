@@ -1,10 +1,10 @@
-// Paste me into the FileEdit configuration dialog
 
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
 #include <ctime>
 #include <iostream>
+#include <algorithm>
 #include <sstream>
 #include <cstring>
 #include <vector>
@@ -13,7 +13,7 @@
 
 using namespace std;
 
-#define SZ(x) ((int)x.size()) 
+#define SZ(x) ((int)x.size())
 #define MSET(x,a) memset(x, a, (int)sizeof(x))
 #define PB push_back
 #define VI vector < int >
@@ -21,8 +21,9 @@ using namespace std;
 #define LL long long
 #define FOR(i,a,b) for (int i = (a); i < (b); i++)
 #define REP(i,n) FOR(i,0,n)
-#define FIT(it,v) for (typeof(v.begin()) it = v.begin(); it != v.end(); it++)
-#define OUT(A) std::cout << #A << '='<<A << std::endl;
+#define ALL(v) (v).begin(), (v).end()
+#define FIT(it,v) for (typeof((v).begin()) it = (v).begin(); it != (v).end(); it++)
+#define OUT(A) cout << #A << " = "<< A << endl
 
 class $CLASSNAME$ {
 public:
@@ -35,4 +36,9 @@ $BEGINCUT$
 $TESTCODE$ 
 
 $DEFAULTMAIN$
+
+/*
+$PROBLEMDESC$
+*/
+
 $ENDCUT$
