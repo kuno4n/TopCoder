@@ -11,6 +11,8 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <stack>
+#include <queue>
 
 using namespace std;
 
@@ -292,9 +294,27 @@ namespace unittest {
 				VI d(c,&c[3]); //こんな初期化も出来る
 				d.insert(d.begin(), 6); //先頭にinsert
                 FIT(it, d) OUT(*it);
-
-
                 return 1;
+            }
+            case 10 : {// pair, stack
+                stack< int > st;
+                st.push(1);
+                OUT(st.top());
+                pair<int, int> pii;
+                pii = pair<int, int>(2,3);
+                OUT(pii.second);
+                pair<int, string> pis;
+                pis = make_pair(4, "ad");
+                OUT(pis.second);
+                
+                stack<pair<int, int> > st2;
+                st2.push(pair<int, int>(5,6));
+                st2.push(make_pair(7,8));
+                OUT(st2.top().second);
+                OUT(st2.empty());
+                st2.pop();
+                st2.pop();
+                OUT(st2.empty());
             }
             case 999 : {
                 return 1;
