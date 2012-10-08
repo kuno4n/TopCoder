@@ -23,54 +23,55 @@ using namespace std;
 #define ALL(v) (v).begin(), (v).end()
 #define FIT(it,v) for(typeof((v).begin()) it = (v).begin(); it != (v).end(); it++)
 #define OUT(A) cout << #A << " = " << A << endl
+#define MP make_pair
 
-vector <string> m;
-int sR, sC, eR, eC, mx, my;
-vector<int> mR, mC;
 
 int ref = 1000;
-
-int dfs(int cnt, int lx, int ly){
-    cout << endl;
-    cout << lx << " " << ly << endl;
-    if(m[lx][ly] == 'X') return ref;
-    m[lx][ly] = 'X';
-    int res = ref;
-    
-    REP(i, SZ(mR)){
-        if (lx+mC[i] > mx || lx+mC[i] < 0 || ly+mR[i] > my || ly+mR[i] < 0) continue;
-        res = min(res, dfs(cnt+1, lx+mC[i], ly+mR[i]));
-    }
-    
-    m[lx][ly] = '.';
-    return res;
-}
 
 class MazeMaker {
 	public:
 	int longestPath(vector <string> maze, int startRow, int startCol, vector <int> moveRow, vector <int> moveCol) {
         
-        sR = startRow;
-        sC = startCol;
-        my = SZ(maze);
-        mx = SZ(maze[0]);
-        mR = moveRow;
-        mC = moveCol;
+        int width = SZ(maze[0]);
+        int height = SZ(maze);
+        int m = SZ(moveRow);
+        int board[100][100];
+//        REP(i, 100) REP(j, 100) board[i][j] = -1;
+        MSET(board, -1);
         
-        int res = ref;
+        queue<int> qx;
+        queue<int> qy;
+        qx.push(startCol);
+        qy.push(startRow);
+        board[startRow][startCol] = 0;
         
-        REP(x, mx){
-            REP(y, my){
-                m = maze;
-                if(m[x][y] == 'X') continue;
-                eR = y;
-                eC = x;
-                res = max(res, dfs(0, sC, sR));
+        while(!qx.empty()){
+            int x = qx.front();
+            int y = qy.front();
+            qx.pop();
+            qy.pop();
+            
+            REP(i, m){
+                int dx = moveCol[i];
+                int dy = moveRow[i];
+                
+                if(x+dx >= 0 && x+dx < width && y+dy >= 0 && y+dy < height &&
+                   board[y+dy][x+dx] == -1 && maze[y+dy][x+dx] == '.'){
+                    qx.push(x+dx);
+                    qy.push(y+dy);
+                    board[y+dy][x+dx] = board[y][x] + 1;
+                }
             }
         }
         
-        return (res == ref ? -1 : res);
-        
+        int res = -1;
+        REP(goalx, width){
+            REP(goaly, height){
+                if(board[goaly][goalx] == -1 && maze[goaly][goalx] == '.') return -1;
+                res = max(res, board[goaly][goalx]);
+            }
+        }
+        return res;        
 		
 	}
 };
