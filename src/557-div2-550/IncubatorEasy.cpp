@@ -24,71 +24,34 @@ using namespace std;
 #define FIT(it,v) for(typeof((v).begin()) it = (v).begin(); it != (v).end(); it++)
 #define OUT(A) cout << #A << " = " << A << endl
 
-vector <string> L;
 int N;
-int res;
+vector <string> L;
+bool isM[20];
 
-void rec(int tar, vector<int> isM, vector<int> isP){
-    isM[tar] = 1;
-    REP(i, N) if(L[tar][i] == 'Y') isP[i] = 1;
-    
-    while(1){
-        bool end = true;
-        REP(i, N) {
-            if(isP[i] == 0) continue;
-            REP(j, N){
-                if(L[i][j] == 'Y' && !isP[j]){
-                    isP[j] = 1;
-                    end = false;
-                }
-            }
-        }
-        if(end) break;
-    }
-    bool end = true;
+bool isP(int tar){
+    REP(i, N) if(isM[i] && L[i][tar] == 'Y') return true;
+    return false;
+}
+
+int calc(int a){
     REP(i, N){
-        REP(j, N){
-            if(!isM[i]&&!isP[i]) end = false;
-        }
+        if(a&(1<<i)) isM[i] = true;
+        else isM[i] = false;
     }
-    
-        int tmp = 0;
-        REP(i, N){
-                if(isM[i]&&!isP[i]) tmp++;
-        }
-        res = max(res, tmp);
-    
-    if(end) return;
-    
-    REP(i, N){
-        if(!isM[i]&&!isP[i]){
-//            vector<int> _isM;
-//            vector<int> _isP;
-//            _isM = isM;
-//            _isP = isP;
-            rec(i, isM, isP);
-        }
-    }
-        
-    return;
-    
+    int res = 0;
+    REP(i, N) if(isM[i] && !isP(i)) res++;
+    return res;    
 }
 
 class IncubatorEasy {
 	public:
 	int maxMagicalGirls(vector <string> love) {
-		N = SZ(love);
-        L = love;
-        res = 0;
-        vector<int> isM;
-        vector<int> isP;
-             
-        REP(i, N){
-            isM.push_back(0);
-            isP.push_back(0);
-        }
-        REP(i, N) rec(i, isM, isP);
-        
+        N = SZ(love);
+        L = love;        
+        REP(a, 110)
+        REP(j, N) REP(i, N) REP(k, N) if(L[i][j] == 'Y' && L[j][k] == 'Y') L[i][k] = 'Y';
+        int res = 0;
+        REP(a, 1<<N) res = max(res, calc(a));
         return res;
 	}
 };
