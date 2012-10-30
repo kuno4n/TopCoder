@@ -34,21 +34,21 @@ int MAX = 999999;
 class FloorBoards {
 
 	int addline(int beforeline, int nowline, int field){
-		// field‚É‚ÄAnowline‚ğˆø‚¢‚½A‰½–{‘«‚³‚ê‚é‚©
+		// fieldÃ‡â€¦Ã‡Æ’Ã…AnowlineÃ‡ï£¿Ã Â¯Ã‡Â¢Ã‡Î©Ã©Ã»Ã…AÃ¢Î©Ã±{Ã«Â´Ã‡â‰¥Ã‡ÃÃ‡ÃˆÃ‡Â©ã‚
 		int res = 0;
 		bool hor = false;
 		REP(i, W){
-			//‰¡
+			//Ã¢Â°
 			if(!(nowline>>i & 1) && !(field>>i & 1)){
 				if(!hor) res++;
 				hor = true;
 				continue;
 			}
 
-			//c
+			//Ã¨c
 			if((nowline>>i & 1) && !(beforeline>>i & 1)) res++;
 
-			//c‚Ü‚½‚Í'#'
+			//Ã¨cÃ‡â€¹Ã‡Î©Ã‡Ã•'#'
 			hor = false;
 		}
 		return res;
