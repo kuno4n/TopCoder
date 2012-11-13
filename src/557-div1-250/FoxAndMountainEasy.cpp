@@ -27,17 +27,28 @@ using namespace std;
 class FoxAndMountainEasy {
 	public:
 	string possible(int n, int h0, int hn, string history) {
+        if(abs(hn-h0-n)%2) return "NO";
         int tmp = 0;
-        int mx = 0;
-		REP(i, SZ(history)){
-            n--;
-            if(history[i] == 'D') tmp++;
+        REP(i, SZ(history)){
+            if(history[i] == 'U') tmp++;
             else tmp--;
-            mx = max(mx, tmp);
         }
-        int height = hn - h0 + tmp;
-        if(abs(height) > n || (n-height)%2 || (n-SZ(history))/2 + h0 < mx) return "NO";
+        if(abs(hn-h0-tmp) > n-SZ(history)) return "NO";
         
+        int height = hn - h0;
+        int Ucnt = 0;
+        int Dcnt = 0;
+        if(height>0) Ucnt = height;
+        else Dcnt = height;
+        Ucnt += (n-abs(height))/2;
+        Dcnt += (n-abs(height))/2;
+        REP(i, SZ(history)) if(history[i] == 'U') Ucnt--;
+        int now = h0+Ucnt;
+        REP(i, SZ(history)){
+            if(history[i] == 'U') now++;
+            else now--;
+            if(now<0) return "NO";
+        }
         
         return "YES";
 	}
