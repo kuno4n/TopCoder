@@ -26,7 +26,7 @@ using namespace std;
 #define REP(i,n) FOR(i,0,n)
 #define ALL(v) (v).begin(), (v).end()
 #define FIT(it,v) for (typeof((v).begin()) it = (v).begin(); it != (v).end(); it++)
-#define OUT(A) cout << #A << " = "<< A << endl
+#define OUT(A) cout << #A << " = "<< (A) << endl
 
 int _isPow2(long long l);
 bool isPow2(long long l);
