@@ -37,6 +37,8 @@ string _10to2(long long l);
 long long Nto10(int N, string s);
 string _10toN(long long l, int N);
 bool isPrime(long long l);
+long long gcd(long long a, long long b);
+long long lcm(long long a, long long b);
 
 //--------------------------------
 // lが2のべき乗であれば、その指数を返す。0乗もあり。
@@ -143,15 +145,27 @@ string _10toN(long long l, int N){
 //--------------------------------
 //素数判定。
 // l：0以上の整数
-bool isPrime(long long l)
-{
-    if(l==0 || l==1 ) return false;
-    if(l==2) return true;
-    if(l%2==0) return false;
-    for(int i=3;i<=l/2;i+=2)
+bool isPrime(long long l){
+    if(l < 2) return false;
+    for(int i=2; i*i<=l; i++)
         if(l%i == 0 )
             return false;
     return true; 
+}
+
+//--------------------------------
+//最大公約数。
+//a,bは1以上の整数。
+long long gcd(long long a, long long b){
+    if(b == 0) return a;
+    return gcd(b, a%b);
+}
+
+//--------------------------------
+//最小公倍数。
+//a,bは1以上の整数。
+long long lcm(long long a, long long b){
+    return a*b/gcd(a,b);
 }
 
 
@@ -294,6 +308,18 @@ namespace unittest {
 				VI d(c,&c[3]); //こんな初期化も出来る
 				d.insert(d.begin(), 6); //先頭にinsert
                 FIT(it, d) OUT(*it);
+                
+                
+                VI e;
+                e.PB(4);
+                e.PB(-100);
+                e.PB(200);
+                VI f = e;
+                f[1] = -105;
+                OUT(e[1]);
+                OUT(f[1]);
+                
+                
                 return 1;
             }
             case 10 : {// pair, stack
@@ -315,6 +341,34 @@ namespace unittest {
                 st2.pop();
                 st2.pop();
                 OUT(st2.empty());
+                return 1;
+            }
+            case 11 : {//isPrime
+                OUT(isPrime(0));
+                OUT(isPrime(1));
+                OUT(isPrime(2));
+                OUT(isPrime(3));
+                OUT(isPrime(4));
+                OUT(isPrime(5));
+                OUT(isPrime(16));
+                OUT(isPrime(107));
+                return 1;
+            }
+            case 12 : {// gcd, lcm
+                OUT(gcd(16,12));
+                OUT(gcd(12,16));
+//                OUT(gcd(0,300));
+//                OUT(gcd(300,0));
+                OUT(gcd(1,300));
+                OUT(gcd(300,1));
+                OUT(gcd(4329214,12350103));
+                OUT(gcd(32501239500,234253512300));
+                
+                OUT(lcm(16,12));
+                OUT(lcm(3,5));
+                OUT(lcm(1,150));
+                OUT(lcm(1024,3000));
+                return 1;
             }
             case 999 : {
                 return 1;
