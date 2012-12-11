@@ -25,59 +25,48 @@ using namespace std;
 #define OUT(A) cout << #A << " = " << A << endl
 
 class DengklekMakingChains {
+
     int check(string s){
-        if(s[0]!='.' && s[2]=='.') return 1;
-        if(s[0]=='.' && s[2]!='.') return 2;
-        if(s[0]!='.' && s[1]=='.' && s[2]!='.'){
-            if(s[0]>s[2]) return 1;
-            else return 2;
-        }
-        if(s[0]!='.' && s[1]!='.' && s[2]!='.') return 3;
+        if(s[0]!='.' && s[1]!='.' && s[2]!='.') return 1;
         return 0;
     }
+
+	int count(string s){
+		int res = 0;
+		int cnt = 0;
+		REP(i, SZ(s)){
+			if(s[i] == '.') cnt = 0;
+			else cnt += (int)s[i] - '0';
+			res = max(res, cnt);
+		}
+		return res;
+	}
     
 	public:
 	int maxBeauty(vector <string> chains) {
-        vector <string> none, left, right, all;
-        none.clear();
-        all.clear();
-        right.clear();
-        left.clear();
+		string beauty = "";
+        vector <string> rusty;
+        rusty.clear();
         
         REP(i, SZ(chains)){
-            if(check(chains[i]) == 0) none.push_back(chains[i]);
-            if(check(chains[i]) == 1) left.push_back(chains[i]);
-            if(check(chains[i]) == 2) right.push_back(chains[i]);
-            if(check(chains[i]) == 3) all.push_back(chains[i]);
-        }
-        
-        int l = 0;
-        REP(i, SZ(left)){
-            int cnt = 0;
-            REP(j, 3){
-                if(left[i][j] == '.') break;
-                cnt += (int)left[i][j]-'0';
-            }
-            l = max(l, cnt);
-        }
-        
-        int r = 0;
-        REP(i, SZ(right)){
-            int cnt = 0;
-            for(int j=2; j>=0; j--){
-                if(right[i][j] == '.') break;
-                cnt += (int)right[i][j]-'0';
-            }
-            r = max(r, cnt);
-        }
-        
-        int res = l+r;
-        REP(i, SZ(all)){
-            REP(j, 3){
-                res += (int)all[i][j]-'0';
-            }
-        }
+            if(check(chains[i])) beauty += chains[i];
+			else rusty.push_back(chains[i]);
+		}
+
+
+		int res = count(beauty);
+		REP(left, SZ(rusty)){
+			REP(right, SZ(rusty)){
+				if(left == right) {
+					res = max(res, max(count(rusty[left]+beauty), count(beauty+rusty[right])));
+					continue;
+				}
+				res = max(res, count(rusty[left] + beauty + rusty[right]));
+			}
+		}
+
 		return res;
+        
 	}
 };
 
@@ -194,6 +183,14 @@ namespace moj_harness {
 		case 5: {
 			string chains[]           = {"412", "..7", ".58", "7.8", "32.", "6..", "351", "3.9", "985", "...", ".46"};
 			int expected__            = 58;
+
+			clock_t start__           = clock();
+			int received__            = DengklekMakingChains().maxBeauty(vector <string>(chains, chains + (sizeof chains / sizeof chains[0])));
+			return verify_case(casenum__, expected__, received__, clock()-start__);
+		}
+		case 6: {
+			string chains[]           = {"9.9", "123"};
+			int expected__            = 15;
 
 			clock_t start__           = clock();
 			int received__            = DengklekMakingChains().maxBeauty(vector <string>(chains, chains + (sizeof chains / sizeof chains[0])));
