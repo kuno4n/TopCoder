@@ -147,7 +147,7 @@ string _10toN(long long l, int N){
 // l：0以上の整数
 bool isPrime(long long l){
     if(l < 2) return false;
-    for(int i=2; i*i<=l; i++)
+    for(LL i=2; i*i<=l; i++)
         if(l%i == 0 )
             return false;
     return true; 
