@@ -13,6 +13,8 @@
 #include <map>
 #include <stack>
 #include <queue>
+#include <numeric>
+#include "cout.h"
 
 using namespace std;
 
@@ -32,13 +34,20 @@ int _isPow2(long long l);
 bool isPow2(long long l);
 int _isPowN(long long l, int N);
 bool isPowN(long long l, int N);
+
 long long _2to10(string s);
 string _10to2(long long l);
 long long Nto10(int N, string s);
 string _10toN(long long l, int N);
+
 bool isPrime(long long l);
+vector<int> divisor(long long l);
+map<int, int> prime_factor(long long l);
+int sieve(int n);
+
 long long gcd(long long a, long long b);
 long long lcm(long long a, long long b);
+long long extgcd(long long a, long long b, long long& x, long long& y);
 
 //--------------------------------
 // lが2のべき乗であれば、その指数を返す。0乗もあり。
@@ -143,7 +152,7 @@ string _10toN(long long l, int N){
 }
 
 //--------------------------------
-//素数判定。
+//素数判定。O(√l)
 // l：0以上の整数
 bool isPrime(long long l){
     if(l < 2) return false;
@@ -151,6 +160,54 @@ bool isPrime(long long l){
         if(l%i == 0 )
             return false;
     return true; 
+}
+
+//--------------------------------
+//約数の列挙。O(√l)
+// l：0以上の整数
+vector<int> divisor(long long l){
+    vector<int> res;
+    for(LL i=1; i*i<=l; i++){
+        if(l%i == 0){
+            res.push_back(i);
+            if(i != l/i) res.push_back(l/i);
+        }
+    }
+    return res;
+}
+
+//--------------------------------
+//素因数分解。O(√l)
+// l：0以上の整数
+map<int, int> prime_factor(long long l){
+    map<int, int> res;
+    for(LL i=2; i*i<=l; i++){
+        while(l%i == 0){
+            res[i]++;
+            l /= i;
+        }
+    }
+    if(l!=1) res[l] = 1;
+    return res;
+}
+
+//--------------------------------
+//エラストテネスの篩。だいたいO(n loglog n)
+// n：0以上の整数
+// n以下の素数の数を返す。
+int sieve(int n){
+    int p = 0;
+    int prime[n]; // i番目の素数。必要なら外出し。
+    bool is_prime[n+1]; // is_prime[i]がtrueならiは素数。必要なら外出し。
+    for(int i=0; i<=n; i++) is_prime[i] = true;
+    is_prime[0] = is_prime[1] = false;
+    for(int i=2; i<=n; i++){
+        if(is_prime[i]){
+            prime[p++] = i;
+            for(int j=2*i; j<=n; j+=i) is_prime[j] = false;
+        }
+    }
+    return p;
 }
 
 //--------------------------------
@@ -166,6 +223,21 @@ long long gcd(long long a, long long b){
 //a,bは1以上の整数。
 long long lcm(long long a, long long b){
     return a*b/gcd(a,b);
+}
+
+//--------------------------------
+//拡張ユークリッドの互除法。
+//ax+by=gcd(a,b) となる整数解(x, y)を求める。
+//ついでにgcd(a,b)を返す。
+long long extgcd(long long a, long long b, long long& x, long long& y){
+    long long d = a;
+    if(b != 0){
+        d = extgcd(b, a%b, y, x);
+        y -= (a/b)*x;
+    } else{
+        x = 1; y = 0;
+    }
+    return d;
 }
 
 
@@ -298,6 +370,7 @@ namespace unittest {
                 //int tmp = find(ALL(a), 50);
 
 				VI b(5); // 最初に要素数決定　いきなりb[3]とかできる
+                VI b_(10, 23); // 最初に要素数と中身も決める　int b_[10] = {23} とほぼ同様（int配列はスタック領域、VIはヒープ領域）
 				OUT(b[2]);
 				OUT(b[4]);
 				OUT(b[5]);
@@ -354,7 +427,35 @@ namespace unittest {
                 OUT(isPrime(107));
                 return 1;
             }
-            case 12 : {// gcd, lcm
+            case 12 : {//divisor
+                OUT(divisor(48));
+                OUT(divisor(1));
+                return 1;
+            }
+            case 13 : {//prime_factor
+                OUT(prime_factor(48));
+                OUT(prime_factor(17));
+                OUT(prime_factor(2));
+                OUT(prime_factor(1));
+                return 1;
+            }
+            case 14 : {//sieve
+                OUT(sieve(1000000));
+                OUT(sieve(2));
+                OUT(sieve(1));
+                return 1;
+            }
+            case 15 : {//extgcd
+                LL x, y;
+                OUT(extgcd(4,11,x,y));
+                OUT(x);
+                OUT(y);
+                OUT(extgcd(15,24,x,y));
+                OUT(x);
+                OUT(y);
+                return 1;
+            }
+            case 20 : {// gcd, lcm
                 OUT(gcd(16,12));
                 OUT(gcd(12,16));
 //                OUT(gcd(0,300));
