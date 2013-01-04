@@ -49,6 +49,10 @@ long long gcd(long long a, long long b);
 long long lcm(long long a, long long b);
 long long extgcd(long long a, long long b, long long& x, long long& y);
 
+LL fact(int n);
+LL c(int n, int k);
+    
+
 //--------------------------------
 // lが2のべき乗であれば、その指数を返す。0乗もあり。
 // そうでなければ、-1を返す。
@@ -238,6 +242,24 @@ long long extgcd(long long a, long long b, long long& x, long long& y){
         x = 1; y = 0;
     }
     return d;
+}
+
+//--------------------------------
+//単純な順列。
+LL fact(int n){
+    LL res = 1;
+    while(n!=1){
+        res *= n;
+        n--;
+    }
+    return res;
+}
+
+//--------------------------------
+//単純な組み合わせ。
+LL c(int n, int k){
+    if(k == 0 || n==k) return 1;
+    return fact(n)/fact(n-k)/fact(k);
 }
 
 
