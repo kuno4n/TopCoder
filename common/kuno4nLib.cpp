@@ -30,6 +30,8 @@ using namespace std;
 #define FIT(it,v) for (typeof((v).begin()) it = (v).begin(); it != (v).end(); it++)
 #define OUT(A) cout << #A << " = "<< (A) << endl
 
+#define MOD 1000000009
+
 int _isPow2(long long l);
 bool isPow2(long long l);
 int _isPowN(long long l, int N);
@@ -49,8 +51,14 @@ long long gcd(long long a, long long b);
 long long lcm(long long a, long long b);
 long long extgcd(long long a, long long b, long long& x, long long& y);
 
-LL fact(int n);
-LL c(int n, int k);
+long long fact(int n);
+long long c(int n, int k);
+
+long long _Pow(long long x, long long y);
+long long modPow(long long x, long long y);
+long long modInverse(long long x);
+long long modDivision(long long p, long long q);
+long long modC(long long n, int k);
     
 
 //--------------------------------
@@ -160,7 +168,7 @@ string _10toN(long long l, int N){
 // l：0以上の整数
 bool isPrime(long long l){
     if(l < 2) return false;
-    for(LL i=2; i*i<=l; i++)
+    for(long long i=2; i*i<=l; i++)
         if(l%i == 0 )
             return false;
     return true; 
@@ -171,7 +179,7 @@ bool isPrime(long long l){
 // l：0以上の整数
 vector<int> divisor(long long l){
     vector<int> res;
-    for(LL i=1; i*i<=l; i++){
+    for(long long i=1; i*i<=l; i++){
         if(l%i == 0){
             res.push_back(i);
             if(i != l/i) res.push_back(l/i);
@@ -185,7 +193,7 @@ vector<int> divisor(long long l){
 // l：0以上の整数
 map<int, int> prime_factor(long long l){
     map<int, int> res;
-    for(LL i=2; i*i<=l; i++){
+    for(long long i=2; i*i<=l; i++){
         while(l%i == 0){
             res[i]++;
             l /= i;
@@ -246,8 +254,8 @@ long long extgcd(long long a, long long b, long long& x, long long& y){
 
 //--------------------------------
 //単純な順列。
-LL fact(int n){
-    LL res = 1;
+long long fact(int n){
+    long long res = 1;
     while(n!=1){
         res *= n;
         n--;
@@ -257,10 +265,67 @@ LL fact(int n){
 
 //--------------------------------
 //単純な組み合わせ。
-LL c(int n, int k){
+long long c(int n, int k){
     if(k == 0 || n==k) return 1;
     return fact(n)/fact(n-k)/fact(k);
 }
+
+
+
+
+//--------------------------------
+//最小２乗法を用いたpow。
+long long _Pow(long long x, long long y){
+    long long r=1, a=x;
+    while(y > 0){
+        if((y&1) == 1) r = r*a;
+        a = a*a;
+        y /= 2;
+    }
+    return r;
+}
+
+//--------------------------------
+//最小２乗法を用いたpow。MOD版。
+long long modPow(long long x, long long y){
+    long long r=1, a=x;
+    while(y > 0){
+        if((y&1) == 1) r = (r*a) % MOD;
+        a = (a*a) % MOD;
+        y /= 2;
+    }
+    return r;
+}
+
+//--------------------------------
+//ここからはMODが素数の場合のみ可
+
+//--------------------------------
+//MODでの逆元。
+long long modInverse(long long x){
+    return modPow(x, MOD-2);
+}
+
+//--------------------------------
+//MODでの割り算。
+long long modDivision(long long p, long long q){
+    return (p*modInverse(q)) % MOD;
+}
+
+//--------------------------------
+//MODでの組み合わせ。
+long long modC(long long n, int k){
+    if(k>n) return 0;
+    long long p=1, q=1;
+    for(int i=1; i<=k; i++){
+        q = (q*i) % MOD;
+        p = (p*(n-i+1))%MOD;
+    }
+    return modDivision(p, q);
+}
+
+//ここまではMODが素数の場合のみ可
+//--------------------------------
 
 
 namespace unittest {
@@ -268,7 +333,7 @@ namespace unittest {
 	void run_test(int casenum = -1, bool quiet = false) {
 		if (casenum != -1) {
 			if (run_test_case(casenum) == -1 && !quiet) {
-				cerr << "Illegal input! Test case " << casenum << " does not exist." << endl;
+				cerr << "Ilong longegal input! Test case " << casenum << " does not exist." << endl;
 			}
             cout << endl;
 			return;
@@ -468,7 +533,7 @@ namespace unittest {
                 return 1;
             }
             case 15 : {//extgcd
-                LL x, y;
+                long long x, y;
                 OUT(extgcd(4,11,x,y));
                 OUT(x);
                 OUT(y);
