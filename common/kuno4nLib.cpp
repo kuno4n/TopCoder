@@ -52,7 +52,8 @@ long long lcm(long long a, long long b);
 long long extgcd(long long a, long long b, long long& x, long long& y);
 
 long long fact(int n);
-long long c(int n, int k);
+long long nCr(long long n, long long r);
+long long _nCr(long long n, long long r);
 
 long long _Pow(long long x, long long y);
 long long modPow(long long x, long long y);
@@ -277,9 +278,28 @@ long long fact(int n){
 
 //--------------------------------
 //単純な組み合わせ。
-long long c(int n, int k){
-    if(k == 0 || n==k) return 1;
-    return fact(n)/fact(n-k)/fact(k);
+long long nCr(long long n, long long r)
+{
+    if(n==r) return 1;
+    return (nCr(n-1,r)*n)/(n-r);
+}
+
+//--------------------------------
+//パスカルの三角形使った組み合わせ。
+long long _nCr(long long n, long long r)
+{
+    int maxn = 100;
+    int c[maxn][maxn];
+    REP(i, maxn) REP(j, maxn) c[i][j] = -100;
+    for(int i=1; i<=n; i++){
+        c[i][0] = 1;
+        c[i][i] = 1;
+        for(int j=1; j<i; j++){
+            c[i][j] = c[i-1][j-1] + c[i-1][j];
+        }
+    }
+    return c[n][r];
+    
 }
 
 
@@ -390,6 +410,78 @@ public:
 
 
 
+//--------------------------------
+//行列計算。
+
+namespace _mat{
+    
+    typedef vector < VI > mat;
+    
+    mat mul(mat &A, mat &B){
+        mat C(SZ(A), VI(SZ(B[0])));
+        REP(i, SZ(A)){
+            REP(k, SZ(B)){
+                REP(j, SZ(B[0])){
+                    C[i][j] = (C[i][j] + A[i][k]*B[k][j]); // MODある場合はここで
+                }
+            }
+        }
+        return C;
+    }
+    
+    mat pow(mat A, LL n){
+        mat B(SZ(A), VI(SZ(A)));
+        REP(i, SZ(A)) B[i][i] = 1;
+        while(n > 0){
+            if(n&1) B = mul(B, A);
+            A = mul(A, A);
+            n >>= 1;
+        }
+        return B;
+    }
+}
+
+
+//--------------------------------
+//二部グラフの最大マッチング。
+
+namespace _bipartite_matching{
+    
+    int V;
+    VI G[110];
+    int match[110];
+    bool used[110];
+    
+    void add_edge(int u, int v){
+        G[u].PB(v);
+        G[v].PB(u);
+    }
+    
+    bool dfs(int v){
+        used[v] = true;
+        REP(i, SZ(G[v])){
+            int u = G[v][i], w = match[u];
+            if(w < 0 || !used[w] && dfs(w)){
+                match[v] = u;
+                match[u] = v;
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    int bipartite_matching(){
+        int res = 0;
+        MSET(match, -1);
+        REP(v, V){
+            if(match[v] < 0){
+                MSET(used, 0);
+                if(dfs(v)) res++;
+            }
+        }
+        return res;
+    }
+}
 
 
 
@@ -611,6 +703,25 @@ namespace unittest {
                 OUT(_Pow(2,10));
                 return 1;
             }
+            case 17 : {//nCr
+//                OUT(nCr(0,1));
+                OUT(nCr(1,1));
+                OUT(nCr(1,0));
+                OUT(nCr(10,0));
+                OUT(nCr(10,1));
+                OUT(nCr(10,3));
+                OUT(nCr(10,10));
+//                OUT(nCr(10,11));
+                OUT(_nCr(0,1));
+                OUT(_nCr(1,1));
+                OUT(_nCr(1,0));
+                OUT(_nCr(10,0));
+                OUT(_nCr(10,1));
+                OUT(_nCr(10,3));
+                OUT(_nCr(10,10));
+                OUT(_nCr(10,11));
+                return 1;
+            }
             case 20 : {// gcd, lcm
                 OUT(gcd(16,12));
                 OUT(gcd(12,16));
@@ -643,6 +754,11 @@ namespace unittest {
 				OUT(uf.same(4,120));
 				OUT(uf.find(1111));
 				//OUT(uf.same(-5,120));
+                return 1;
+            }
+                
+            case 40 : {
+                _bipartite_matching::V = 4;
                 return 1;
             }
             case 999 : {
