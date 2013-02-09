@@ -484,6 +484,36 @@ namespace _bipartite_matching{
 }
 
 
+//--------------------------------
+//セグメント木。RMQ。
+
+namespace seg_tree{
+    int tab[200040];
+    
+    // 区間 [a, b) 内の最小値。　呼び出すときは get(a, b, 0, 0, n);
+    int get(int a, int b, int node, int left, int right){
+        if(right <= a || b <= left) return INF;
+        if(a <= left && right <= b) return tab[node];
+        int m = (left + right) / 2;
+        int la = get(a, b, node*2+1, left, m);
+        int ra = get(a, b, node*2+2, m, right);
+        return min(la, ra);
+    }
+    
+    // a番目の値をxに変える。　呼び出すときは update(a, x, 0, 0, n);
+    void update(int a, int x, int node, int left, int right){
+        if(a < left || right <= a) return;
+        if(left+1 == right) {
+            tab[node] = min(x, tab[node]);
+            return;
+        }
+        int m = (left+right)/2;
+        update(a, x, node*2+1, left, m);
+        update(a, x, node*2+2, m, right);
+        tab[node] = min(tab[node*2+1], tab[node*2+2]);
+    }
+}
+
 
 namespace unittest {
 	int  run_test_case(int);
