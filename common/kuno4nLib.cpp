@@ -286,6 +286,9 @@ long long nCr(long long n, long long r)
 
 //--------------------------------
 //パスカルの三角形使った組み合わせ。
+//0Crは-100にしてるので注意。
+//あと、n<rのときも-100。
+//nC0は1。
 long long _nCr(long long n, long long r)
 {
     int maxn = 100;
@@ -445,6 +448,10 @@ namespace _mat{
 //--------------------------------
 //二部グラフの最大マッチング。
 
+// Vは、二部グラフの左の頂点数。
+// 「ここからまだフロー流せるか？」を左の頂点全てに対して行う。
+// ちなみに、Vは左右合わせた全部の頂点数でも問題ない。（左が終わった後に右からのをチェックしても、マッチ数は絶対増えない）
+
 namespace _bipartite_matching{
     
     int V;
@@ -513,6 +520,34 @@ namespace seg_tree{
         tab[node] = min(tab[node*2+1], tab[node*2+2]);
     }
 }
+
+//--------------------------------
+//BIT。
+//[1,n]なので注意。[0,n-1]ではない。
+
+namespace BIT{
+    
+    int n;
+    
+    int sum(int i){
+        int s = 0;
+        while(i>0){
+            s+=bit[i];
+            i -= i & -i;
+        }
+        return s;
+    }
+    
+    void add(int i, int x){
+        while(i <= n){
+            bit[i] += x;
+            i += i & -i;
+        }
+    }
+    
+}
+
+
 
 
 namespace unittest {
