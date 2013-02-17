@@ -31,6 +31,7 @@ using namespace std;
 #define OUT(A) cout << #A << " = "<< (A) << endl
 
 #define MOD 1000000009
+#define INF (1<<30)-1
 
 int _isPow2(long long l);
 bool isPow2(long long l);
@@ -61,17 +62,7 @@ long long modInverse(long long x);
 long long modDivision(long long p, long long q);
 long long modC(long long n, int k);
 
-//class Union_Find{
-//private:
-//	vector <int> par;
-//	vector <int> rank;
-//public:
-//	Union_Find(int n);
-//	void init(int n);
-//	int find(int x);
-//	void unite(int x, int y);
-//	bool same(int x, int y);
-//};
+
     
 
 //--------------------------------
@@ -414,7 +405,7 @@ public:
 
 
 //--------------------------------
-//行列計算。
+//行列の累乗。
 
 namespace _mat{
     
@@ -441,52 +432,6 @@ namespace _mat{
             n >>= 1;
         }
         return B;
-    }
-}
-
-
-//--------------------------------
-//二部グラフの最大マッチング。
-
-// Vは、二部グラフの左の頂点数。
-// 「ここからまだフロー流せるか？」を左の頂点全てに対して行う。
-// ちなみに、Vは左右合わせた全部の頂点数でも問題ない。（左が終わった後に右からのをチェックしても、マッチ数は絶対増えない）
-
-namespace _bipartite_matching{
-    
-    int V;
-    VI G[110];
-    int match[110];
-    bool used[110];
-    
-    void add_edge(int u, int v){
-        G[u].PB(v);
-        G[v].PB(u);
-    }
-    
-    bool dfs(int v){
-        used[v] = true;
-        REP(i, SZ(G[v])){
-            int u = G[v][i], w = match[u];
-            if(w < 0 || !used[w] && dfs(w)){
-                match[v] = u;
-                match[u] = v;
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    int bipartite_matching(){
-        int res = 0;
-        MSET(match, -1);
-        REP(v, V){
-            if(match[v] < 0){
-                MSET(used, 0);
-                if(dfs(v)) res++;
-            }
-        }
-        return res;
     }
 }
 
@@ -526,8 +471,8 @@ namespace seg_tree{
 //[1,n]なので注意。[0,n-1]ではない。
 
 namespace BIT{
-    
-    int n;
+    const int MAX_N = 100;
+    int bit[MAX_N], n;
     
     int sum(int i){
         int s = 0;
@@ -547,6 +492,278 @@ namespace BIT{
     
 }
 
+
+
+
+//--------------------------------
+//ワーシャル-フロイド法による全点対最短路検出。
+//O(|V|^3)。
+
+//同時に、経路復元も出来るようにしている。
+//また、負閉路検出もしている。
+
+namespace Warshall-Floyd{
+    const int MAX_V = 100;
+    int V;
+    
+    // G[i][j]は、最終的に「iからjの最短路長」が入る。
+    // 負閉路が存在する場合は、G[i][i] < 0 となるiが最終的に発生する。
+    // 初期値として、G[i][i]は0、路がある場合はその路長、路が無い場合はINFを入れておく。
+    int G[MAX_V][MAX_V];
+    
+    // prev[i][j]は、最終的に「iからjの最短路におけるjの直前のノード」が入る。
+    // 初期値として、全てのi, jに対してprev[i][j] = i としてしまってOK
+    int prev[MAX_V][MAX_V];
+    
+    // 負閉路が存在した後に処理をするための、ループ検出フラグ
+    bool used[MAX_V];
+    
+    void warshall_floyd(){
+        REP(k, V) REP(i, V) REP(j, V){
+            if(G[i][j] > G[i][k] + G[k][j]){
+                G[i][j] = G[i][k] + G[k][j];
+                prev[i][j] = prev[k][j];
+                if(i==j && G[i][i] < 0){
+                    // 負閉路が存在したときの処理。
+                    // 一つでも発生したらここで処理しておしまいにしている。
+                    // 最後までwarshall_floydやってその後で負閉路検出してもいい。
+                    fill(used, used+V, false);
+                    for(int v = i; !used[v]; v = prev[i][v]){
+                        used[v] = true;
+                        // 負閉路に対する何か処理
+                    }
+                    // 負閉路に対する何か処理
+                    return;
+                }
+            }
+        }
+        return;
+    }
+}
+
+
+
+
+//--------------------------------
+//二部グラフの最大マッチング。
+
+// Vは、二部グラフの左の頂点数。
+// 「ここからまだフロー流せるか？」を左の頂点全てに対して行う。
+// ちなみに、Vは左右合わせた全部の頂点数でも問題ない。（左が終わった後に右からのをチェックしても、マッチ数は絶対増えない）
+
+namespace _bipartite_matching{
+    const int MAX_V = 110;
+    
+    int V;
+    VI G[MAX_V];
+    int match[MAX_V];
+    bool used[MAX_V];
+    
+    void add_edge(int u, int v){
+        G[u].PB(v);
+        G[v].PB(u);
+    }
+    
+    bool dfs(int v){
+        used[v] = true;
+        REP(i, SZ(G[v])){
+            int u = G[v][i], w = match[u];
+            if(w < 0 || !used[w] && dfs(w)){
+                match[v] = u;
+                match[u] = v;
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    int bipartite_matching(){
+        int res = 0;
+        MSET(match, -1);
+        REP(v, V){
+            if(match[v] < 0){
+                MSET(used, 0);
+                if(dfs(v)) res++;
+            }
+        }
+        return res;
+    }
+}
+
+
+
+
+//--------------------------------
+//最大流。
+//Ford-Fulkerson法
+//O(F|E|)
+
+namespace Ford_Fulkerson{
+    
+    const int MAX_V = 110;
+    
+    struct edge {int to, cap, rev;};
+    vector <edge> G[MAX_V];
+    bool used[MAX_V];
+    
+    void add_edge(int from, int to, int cap){
+        G[from].push_back((edge){to, cap, G[to].size()});
+        G[to].push_back((edge){from, 0, G[from].size()-1});
+    }
+
+    int dfs(int v, int t, int f){
+        if (v == t) return f;
+        used[v] = true;
+        for(int i = 0; i < SZ(G[v]); i++){
+            edge &e = G[v][i];
+            if(!used[e.to] && e.cap > 0){
+                int d = dfs(e.to, t, min(f, e.cap));
+                if(d > 0){
+                    e.cap -= d;
+                    G[e.to][e.rev].cap += d;
+                    return d;
+                }
+            }
+        }
+        return 0;
+    }
+    
+    int max_flow(int s, int t){
+        int flow = 0;
+        while(1){
+            memset(used, 0, sizeof(used));
+            int f = dfs(s, t, INF);
+            if(f == 0) return flow;
+            flow += f;
+        }
+    }
+    
+    
+}
+
+
+//--------------------------------
+//最大流。
+//Dinic法
+//O(|E||V|^2)
+
+namespace Dinic{
+    
+    const int MAX_V = 10000;
+    
+    struct edge {int to, cap, rev;};
+    vector <edge> G[MAX_V];
+    int level[MAX_V];
+    int iter[MAX_V];
+    
+    void add_edge(int from, int to, int cap){
+        G[from].push_back((edge){to, cap, G[to].size()});
+        G[to].push_back((edge){from, 0, G[from].size()-1});
+    }
+    
+    void bfs(int s){
+        MSET(level, -1);
+        queue<int> que;
+        level[s] = 0;
+        que.push(s);
+        while(SZ(que)){
+            int v = que.front(); que.pop();
+            REP(i, SZ(G[v])){
+                edge &e = G[v][i];
+                if(e.cap > 0 && level[e.to] < 0){
+                    level[e.to] = level[v] + 1;
+                    que.push(e.to);
+                }
+            }
+        }
+    }
+    
+    int dfs(int v, int t, int f){
+        if (v == t) return f;
+        for(int &i = iter[v]; i < SZ(G[v]); i++){
+            edge &e = G[v][i];
+            if(e.cap > 0 && level[v] < level[e.to]){
+                int d = dfs(e.to, t, min(f, e.cap));
+                if(d > 0){
+                    e.cap -= d;
+                    G[e.to][e.rev].cap += d;
+                    return d;
+                }
+            }
+        }
+        return 0;
+    }
+    
+    int max_flow(int s, int t){
+        int flow = 0;
+        while(1){
+            bfs(s);
+            if(level[t] < 0) return flow;
+            memset(iter, 0, sizeof(iter));
+            int f;
+            while((f = dfs(s, t, INF)) > 0) flow += f;
+        }
+    }
+}
+
+
+//--------------------------------
+//最小費用流。
+//O(F|V|^2) または O(F|E|log|V})
+
+namespace mincost{
+    typedef pair<int, int> P;
+    struct edge {int to, cap, cost, rev;};
+    const int MAX_V = 1000;
+
+    int V; // Vは別途忘れずに設定すること
+    vector <edge> G[MAX_V];
+    int h[MAX_V];
+    int dist[MAX_V];
+    int prevv[MAX_V], preve[MAX_V];
+    
+    void add_edge(int from, int to, int cap, int cost){
+        G[from].push_back((edge){to, cap, cost, G[to].size()});
+        G[to].push_back((edge){from, 0, -cost, G[from].size()-1});
+    }
+    
+    int min_cost_flow(int s, int t, int f){
+        int res = 0;
+        fill(h, h+V, 0);
+        while(f > 0){
+            priority_queue<P, vector<P>, greater<P> > que;
+            fill(dist, dist+V, INF);
+            dist[s] = 0;
+            que.push(P(0, s));
+            while(SZ(que)){
+                P p = que.top(); que.pop();
+                int v = p.second;
+                if(dist[v] < p.first) continue;
+                REP(i, SZ(G[v])){
+                    edge &e = G[v][i];
+                    if(e.cap > 0 && dist[e.to] > dist[v] + e.cost + h[v] - h[e.to]){
+                        dist[e.to] = dist[v] + e.cost + h[v] - h[e.to];
+                        prevv[e.to] = v;
+                        preve[e.to] = i;
+                        que.push(P(dist[e.to], e.to));
+                    }
+                }
+            }
+            if(dist[t] == INF) return -1;
+            REP(v, V) h[v] += dist[v];
+            int d = f;
+            for(int v = t; v != s; v = prevv[v]) d = min(d, G[prevv[v]][preve[v]].cap);
+            f -= d;
+            res += d*h[t];
+            for(int v = t; v != s; v = prevv[v]){
+                edge &e = G[prevv[v]][preve[v]];
+                e.cap -= d;
+                G[v][e.rev].cap += d;
+            }
+        }
+        return res;
+    }
+}
 
 
 
