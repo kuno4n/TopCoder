@@ -492,26 +492,7 @@ namespace BIT{
     
 }
 
-//--------------------------------
-//隣接行列グラフから木を作成
-//ノード数N
-//根が0なら、makeTree(0, -1)で作成出来る。
 
-namespace MakeTree{
-	const int N = 100;
-	bool G[N][N];
-	int tree[N][N];
-	int childcnt[N];
-
-	void makeTree(int node, int parent){
-		REP(i, N) if(G[node][i] && i != parent){
-			tree[node][childcnt[node]++] = i;
-			makeTree(i, node);
-		}
-		return;
-	}
-
-}
 
 
 //--------------------------------
@@ -521,7 +502,7 @@ namespace MakeTree{
 //同時に、経路復元も出来るようにしている。
 //また、負閉路検出もしている。
 
-namespace Warshall_Floyd{
+namespace Warshall-Floyd{
     const int MAX_V = 100;
     int V;
     
@@ -587,7 +568,7 @@ namespace _bipartite_matching{
         used[v] = true;
         REP(i, SZ(G[v])){
             int u = G[v][i], w = match[u];
-            if(w < 0 || (!used[w] & dfs(w)) ){
+            if(w < 0 || !used[w] && dfs(w)){
                 match[v] = u;
                 match[u] = v;
                 return true;
@@ -735,8 +716,8 @@ namespace mincost{
     struct edge {int to, cap, cost, rev;};
     const int MAX_V = 1000;
 
-    int V; // Vは別途忘れずに設定すること
-    vector <edge> G[MAX_V];
+    int V; // Vは別途忘れずに設定すること。「最後のノード番号＋１」であることに注意。sinkと同じ数ではない。sink+1。
+    vector <edge> G[MAX_V]; // 使い回す場合は、Gも忘れず初期化すること
     int h[MAX_V];
     int dist[MAX_V];
     int prevv[MAX_V], preve[MAX_V];
