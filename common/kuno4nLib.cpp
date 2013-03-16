@@ -865,6 +865,39 @@ namespace vec{
 }
 
 
+//--------------------------------
+// 連立方程式。O(n);
+
+namespace gauss_jordan{
+    const double EPS = 1e-8;
+    typedef vector<double> vec;
+    typedef vector<vec> mat;
+    
+    // Ax = b を解く　Aは正方行列
+    // 解が無いか、一意でない場合は長さ０の配列を返す
+    vec gauss_jordan(const mat& A, const vec& b){
+        int n = SZ(A);
+        mat B(n, vec(n + 1));
+        REP(i, n) REP(j, n) B[i][j] = A[i][j];
+        REP(i, n) B[i][n] = b[i];
+        
+        REP(i, n){
+            int pivot = i;
+            FOR(j, i, n) if(abs(B[j][i]) > abs(B[pivot][i])) pivot = j;
+            swap(B[i], B[pivot]);
+            if(abs(B[i][i]) < EPS) return vec();
+            for(int j = i + 1; j <= n; j++) B[i][j] /= B[i][i];
+            REP(j, n) if(i != j) for(int k = i + 1; k <= n; k++) B[j][k] -= B[j][i] * B[i][k];
+        }
+        vec x(n);
+        REP(i, n) x[i] = B[i][n];
+        return x;
+    }
+}
+
+
+
+
 
 
 namespace unittest {
