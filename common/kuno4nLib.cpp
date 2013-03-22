@@ -788,6 +788,53 @@ namespace mincost{
 
 
 
+
+//--------------------------------
+//強連結成分分解。
+
+namespace strongly_connected_component{
+    const int MAX_V = 100;
+    
+    int V;
+    VI G[MAX_V];
+    VI rG[MAX_V];
+    VI vs;
+    bool used[MAX_V];
+    int cmp[MAX_V];
+    
+    void add_edge(int from, int to){
+        G[from].push_back(to);
+        rG[to].push_back(from);
+    }
+    
+    void dfs(int v){
+        used[v] = true;
+        REP(i, SZ(G[v])) if(!used[G[v][i]]) dfs(G[v][i]);
+        vs.push_back(v);
+    }
+    
+    void rdfs(int v, int k){
+        used[v] = true;
+        cmp[v] = k;
+        REP(i, SZ(rG[v])) if(!used[rG[v][i]]) rdfs(rG[v][i], k);
+    }
+    
+    // 強連結成分の数をついでに返す。
+    int scc(){
+        MSET(used, false);
+        vs.clear();
+        int k = 0;
+        REP(v, V) if(!used[v]) dfs(v);
+        MSET(used, false);
+        for(int i = SZ(vs) - 1; i >= 0; i--)
+            if(!used[vs[i]]) rdfs(vs[i], k++);
+        return k;
+    }
+}
+
+
+
+
 //--------------------------------
 //二次元ベクトル系ライブラリ。
 
