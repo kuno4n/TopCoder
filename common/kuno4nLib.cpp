@@ -820,6 +820,7 @@ namespace strongly_connected_component{
     }
     
     // 強連結成分の数をついでに返す。
+	// 強連結成分の１番末尾の番号（cmp[]に入ってる）は、k-1なので注意。
     int scc(){
         MSET(used, false);
         vs.clear();
