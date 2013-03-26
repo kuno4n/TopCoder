@@ -34,6 +34,7 @@ using namespace std;
 #define INF (1<<30)-1
 
 string int2str(LL a);
+string _int2str(LL a, int len);
 
 int _isPow2(long long l);
 bool isPow2(long long l);
@@ -66,11 +67,25 @@ long long modC(long long n, int k);
 
 
 
+//--------------------------------
+// intをstringに変換。
 string int2str(LL a){
     stringstream ss;
     ss << a;
     string res;
     ss >> res;
+    return res;
+}
+
+//--------------------------------
+// intをstringに変換。
+// 長さが足りない場合は0詰め。
+string _int2str(int a, int len){
+    stringstream ss;
+    ss << a;
+    string res;
+    ss >> res;
+    while(SZ(res) < len) res = "0"+res;
     return res;
 }
 
