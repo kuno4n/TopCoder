@@ -33,6 +33,8 @@ using namespace std;
 #define MOD 1000000009
 #define INF (1<<30)-1
 
+string int2str(LL a);
+
 int _isPow2(long long l);
 bool isPow2(long long l);
 int _isPowN(long long l, int N);
@@ -63,7 +65,14 @@ long long modDivision(long long p, long long q);
 long long modC(long long n, int k);
 
 
-    
+
+string int2str(LL a){
+    stringstream ss;
+    ss << a;
+    string res;
+    ss >> res;
+    return res;
+}
 
 //--------------------------------
 // lが2のべき乗であれば、その指数を返す。0乗もあり。
