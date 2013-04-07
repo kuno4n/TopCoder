@@ -163,7 +163,7 @@ string _10to2(long long l){
 
 //--------------------------------
 //N進数の文字列sをを10進数に。
-// N：2～9の自然数
+// N：2～10の自然数
 // s：0～N-1からなる文字列
 long long Nto10(int N, string s){
     long long res = 0;
@@ -381,27 +381,16 @@ long long modC(long long n, int k){
 //--------------------------------
 //Union-Find木。
 
-class Union_Find{
-private:
-	vector<int> par;  //親
-	vector<int> rank; //木の深さ
-public:
-	// n要素で初期化（コンストラクタ）
-	Union_Find(int n){
-		par.clear();
-		rank.clear();
-		for(int i=0; i<n; i++){
-			par.push_back(i);
-			rank.push_back(0);
-		}
-	}
+namespace Union_Find{
+    const int MAX_N = 1000;
+	int par[MAX_N];  //親
+	int rank[MAX_N]; //木の深さ
+    
 	// n要素で初期化
 	void init(int n){
-		par.clear();
-		rank.clear();
-		for(int i=0; i<n; i++){
-			par.push_back(i);
-			rank.push_back(0);
+        REP(i, n){
+			par[i] = i;
+            rank[i] = 0;
 		}
 	}
 	//木の根を求める
@@ -1225,24 +1214,24 @@ namespace unittest {
                 OUT(lcm(1024,3000));
                 return 1;
             }
-            case 30 : {// Union_Find
-                Union_Find uf(6);
-				uf.unite(0,1);
-				uf.unite(0,3);
-				uf.unite(2,4);
-				uf.unite(4,5);
-				OUT(1);
-				OUT(uf.same(0,3));
-				OUT(uf.same(2,5));
-				OUT(uf.same(0,5));
-				uf.unite(4,100);
-				OUT(uf.same(0,100));
-				OUT(uf.same(4,100));
-				OUT(uf.same(4,120));
-				OUT(uf.find(1111));
-				//OUT(uf.same(-5,120));
-                return 1;
-            }
+//            case 30 : {// Union_Find
+//                Union_Find uf(6);
+//				uf.unite(0,1);
+//				uf.unite(0,3);
+//				uf.unite(2,4);
+//				uf.unite(4,5);
+//				OUT(1);
+//				OUT(uf.same(0,3));
+//				OUT(uf.same(2,5));
+//				OUT(uf.same(0,5));
+//				uf.unite(4,100);
+//				OUT(uf.same(0,100));
+//				OUT(uf.same(4,100));
+//				OUT(uf.same(4,120));
+//				OUT(uf.find(1111));
+//				//OUT(uf.same(-5,120));
+//                return 1;
+//            }
                 
             case 40 : {
                 _bipartite_matching::V = 4;
