@@ -299,25 +299,24 @@ long long nCr(long long n, long long r)
     return (nCr(n-1,r)*n)/(n-r);
 }
 
+
 //--------------------------------
 //パスカルの三角形使った組み合わせ。
-//0Crは-100にしてるので注意。
-//あと、n<rのときも-100。
+//0Cr、n<rのとき不定になるので注意。
 //nC0は1。
-long long _nCr(long long n, long long r)
-{
-    int maxn = 100;
-    int c[maxn][maxn];
-    REP(i, maxn) REP(j, maxn) c[i][j] = -100;
-    for(int i=1; i<=n; i++){
-        c[i][0] = 1;
-        c[i][i] = 1;
-        for(int j=1; j<i; j++){
-            c[i][j] = c[i-1][j-1] + c[i-1][j];
+namespace pas {
+    const int MAX_N = 1000;
+    int nCr[MAX_N+1][MAX_N+1];
+    
+    void makepas(){
+        for(int i=1; i<=MAX_N; i++){
+            nCr[i][0] = 1;
+            nCr[i][i] = 1;
+            for(int j=1; j<i; j++){
+                nCr[i][j] = (nCr[i-1][j-1] + nCr[i-1][j]) % MOD;
+            }
         }
     }
-    return c[n][r];
-    
 }
 
 
