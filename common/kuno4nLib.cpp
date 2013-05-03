@@ -251,6 +251,26 @@ int sieve(int n){
 }
 
 //--------------------------------
+//エラストテネスの篩その２。
+//primefactors[n] に、nの素因数の数を入れる。
+//primefactors[12]=3。
+//nが素数とは、primefactors[n] == 0 ということ。
+namespace _sieve{
+	const int MAX_N = 1000000;
+	int primefactors[MAX_N+1];
+	
+	void make(){
+		fill(primefactors, primefactors+MAX_N+1, 0); 
+		primefactors[0] = primefactors[1] = 1; //0 and 1 are not primes
+		for (int i=2; i<=MAX_N; i++)             //
+		 if(primefactors[i] == 0)         //it is a prime number
+		     for (int j=2*i; j<=MAX_N; j+=i )           // For each multiple of i
+		         for (int x = j; x%i == 0 ;  x/=i ) // appropriately increase
+		             primefactors[j]++;             // the number of prime factors.
+	}
+};
+
+//--------------------------------
 //最大公約数。
 //a,bは1以上の整数。
 long long gcd(long long a, long long b){
