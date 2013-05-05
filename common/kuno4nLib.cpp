@@ -546,6 +546,38 @@ namespace MakeTree{
 }
 
 
+//--------------------------------
+//単純なダイクストラ。
+//O(|V|^2)。
+//残っている頂点のうち最短の頂点から「配る」のイメージ。
+
+//同時に、経路復元も出来るようにしている。
+
+namespace dijkstra{
+	const int INF = (1<<29);
+
+	const int MAX_V = 100;
+	int cost[MAX_V][MAX_V]; // cost[u][v] は辺 e = (u, v) のコストが最初に入っている。存在しない場合はINF。
+	int d[MAX_V]; // d[v]は最終的に「スタートの頂点sから頂点vの最短距離」が入る。
+	bool used[MAX_V];
+	int V; // Vに値を入れることも忘れずに！
+
+
+
+	void dijk(int s){
+		fill(used, used+V, false);
+		fill(d, d+V, INF);
+		d[s] = 0;
+		while(1){
+			int v = -1;
+			REP(i, V) if(!used[i] && (v == -1 || d[i] < d[v])) v = i;
+			if(v == -1) break;
+			used[v] = true;
+			REP(i, V) d[i] = min(d[i], d[v] + cost[v][i];
+		}		
+	}
+};
+
 
 
 //--------------------------------
@@ -1207,14 +1239,14 @@ namespace unittest {
                 OUT(nCr(10,3));
                 OUT(nCr(10,10));
 //                OUT(nCr(10,11));
-                OUT(_nCr(0,1));
-                OUT(_nCr(1,1));
-                OUT(_nCr(1,0));
-                OUT(_nCr(10,0));
-                OUT(_nCr(10,1));
-                OUT(_nCr(10,3));
-                OUT(_nCr(10,10));
-                OUT(_nCr(10,11));
+                //OUT(_nCr(0,1));
+                //OUT(_nCr(1,1));
+                //OUT(_nCr(1,0));
+                //OUT(_nCr(10,0));
+                //OUT(_nCr(10,1));
+                //OUT(_nCr(10,3));
+                //OUT(_nCr(10,10));
+                //OUT(_nCr(10,11));
                 return 1;
             }
             case 20 : {// gcd, lcm
