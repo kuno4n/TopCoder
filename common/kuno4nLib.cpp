@@ -554,7 +554,8 @@ namespace MakeTree{
 //同時に、経路復元も出来るようにしている。
 
 namespace dijkstra{
-	const int INF = (1<<29);
+    
+	//const int INF = (1<<29);
 
 	const int MAX_V = 100;
 	int cost[MAX_V][MAX_V]; // cost[u][v] は辺 e = (u, v) のコストが最初に入っている。存在しない場合はINF。
@@ -562,21 +563,34 @@ namespace dijkstra{
 	bool used[MAX_V];
 	int V; // Vに値を入れることも忘れずに！
 
+    int prev[MAX_V]; // 頂点sからvへの最短路で、vの直前のノードがprev[v]となる
 
 
 	void dijk(int s){
 		fill(used, used+V, false);
 		fill(d, d+V, INF);
+        fill(prev, prev+V, -1);
 		d[s] = 0;
 		while(1){
 			int v = -1;
 			REP(i, V) if(!used[i] && (v == -1 || d[i] < d[v])) v = i;
 			if(v == -1) break;
 			used[v] = true;
-			REP(i, V) d[i] = min(d[i], d[v] + cost[v][i];
-		}		
+			REP(i, V) if(d[i] > d[v] + cost[v][i]){
+                d[i] = d[v] + cost[v][i];
+                prev[i] = v;
+            }
+		}
 	}
-};
+    
+    // 頂点sから頂点tへの最短路
+    VI get_path(int t){
+        VI path;
+        for(; t != -1; t = prev[t]) path.push_back(t);
+        reverse(ALL(path));
+        return path;
+    }
+}
 
 
 
