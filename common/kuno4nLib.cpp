@@ -322,13 +322,14 @@ long long nCr(long long n, long long r)
 
 //--------------------------------
 //パスカルの三角形使った組み合わせ。
-//0Cr、n<rのとき不定になるので注意。
+//0Cr、n<rのとき、注意のため-1としている。（0Crは1としておくと組み合わせのとき楽かも）
 //nC0は1。
 namespace pas {
     const int MAX_N = 1000;
-    int nCr[MAX_N+1][MAX_N+1];
+    LL nCr[MAX_N+1][MAX_N+1];
     
     void makepas(){
+        REP(i, MAX_N+1) REP(j, MAX_N+1) nCr[i][j] = -1;
         for(int i=1; i<=MAX_N; i++){
             nCr[i][0] = 1;
             nCr[i][i] = 1;
