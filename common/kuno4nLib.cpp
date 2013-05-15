@@ -33,6 +33,8 @@ using namespace std;
 #define MOD 1000000009
 #define INF (1<<30)-1
 
+long long str2int(string s)
+
 string int2str(LL a);
 string _int2str(LL a, int len);
 
@@ -66,6 +68,18 @@ long long modDivision(long long p, long long q);
 long long modC(long long n, int k);
 
 
+
+
+//--------------------------------
+// stringをintに変換。
+LL str2int(string s){
+    LL res = 0;
+    REP(i, SZ(s)){
+        res *= 10;
+        res += s[i]-'0';
+    }
+    return res;
+}
 
 //--------------------------------
 // intをstringに変換。
