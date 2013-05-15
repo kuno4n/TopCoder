@@ -29,17 +29,23 @@ using namespace std;
 #define FIT(it,v) for (typeof((v).begin()) it = (v).begin(); it != (v).end(); it++)
 #define OUT(A) cout << #A << " = "<< (A) << endl
 
-LL MOD = 1000000007;
+LL MOD = 1000000007LL;
+
+//int not0[350];
+//bool canALL0[350][350];
+//LL dp[350][350];
 
 int not0[350];
-bool canALL0[350][350];
-LL dp[350][350];
+LL dp[350];
 
 class WolfInZooDivTwo {
 public:
    int count( int N, vector <string> L, vector <string> R ) {
-	REP(i, 350) not0[i] = 10000;
-	REP(i, 350) REP(j, 350) canALL0[i][j] = true;
+	
+	
+	
+	REP(i, 350) not0[i] = -1;
+//	REP(i, 350) REP(j, 350) canALL0[i][j] = true;
 	string sl, sr;
 	REP(i, SZ(L)) sl += L[i];
 	REP(i, SZ(R)) sr += R[i];
@@ -49,32 +55,57 @@ public:
 		int l=-1, r=-1;
 		ssl >> l; ssr >> r;
 		if(l == -1) break;
-		not0[l] = min(not0[l], r);
+		not0[r+1] = max(not0[r+1], l+1);
 	}
-	REP(i, N)
-		if(not0[i] < N) 
-			for(int left = i; left >= 0; left--) 
-				for(int right = not0[i]; right < N; right++) 
-					canALL0[left][right] = false;
 	
-	REP(i, 350) REP(j, 350) dp[i][j] = 0;
-	REP(i, N) dp[i][i] = 1;
+	REP(i, 350) dp[i] = 0;
+	int start = 0;
+	dp[0] = 1;
+	for(int i = 1; i <= N+1; i++){
+		if(not0[i-1] > -1) start = max(start, not0[i-1]);
+		for(int j = start; j <= i-1; j++) dp[i] = (dp[i] + dp[j]) % MOD;
+	}
 	
-	for(int len = 1; len < N; len++){
-		for(int left = 0; left < N; left++){
-			int right = left + len;
-			if(right >= N) continue;
-			
-			dp[left][right] = (dp[left+1][right] * 2) % MOD;
-			if(canALL0[left+1][right]) dp[left][right] = (dp[left][right] + 1) % MOD;
-			
-			if(not0[left] < right && canALL0[left+1][not0[left]]){
-				int left2 = not0[left] + 1;
-				dp[left][right] = (dp[left][right] - dp[left2][right] + MOD) % MOD;
-			}
-		}
-	}OUT(dp[1][9]);
-	return dp[0][N-1];
+//	REP(i, N+2){
+//		OUT(i);
+//		OUT(not0[i]);
+//		OUT(dp[i]);
+//	}
+	return dp[N+1];
+	
+	
+//	REP(i, N)
+//		if(not0[i] < N) 
+//			for(int left = i; left >= 0; left--) 
+//				for(int right = not0[i]; right < N; right++) 
+//					canALL0[left][right] = false;
+//	
+//	REP(i, 350) REP(j, 350) dp[i][j] = 0;
+//	REP(i, N) dp[i][i] = 1;
+//	
+//	for(int len = 1; len < N; len++){
+//		for(int left = 0; left < N; left++){
+//			int right = left + len;
+//			if(right >= N) continue;
+//			
+//			dp[left][right] = dp[left+1][right] // 1****
+//			if(canALL0[left+1][right]) dp[left][right] = (dp[left][right] + 1) % MOD; // 10000
+//			
+//			if(not0
+//			if(not0[left] >= right)
+//				dp[left][right] = (dp[left][right] + dp[left+1][right]) % MOD; // 0****
+//			else{
+//				
+//			}
+//			
+//			if(not0[left] < right && canALL0[left+1][not0[left]]){
+//				int left2 = not0[left] + 1;
+//				dp[left][right] = (dp[left][right] - dp[left2][right] + MOD) % MOD;
+//			}
+//			OUT(left);OUT(right);OUT(dp[left][right]);
+//		}
+//	}
+//	return dp[0][N-1];
 
    }
 };
@@ -202,26 +233,26 @@ namespace moj_harness {
 			int received__            = WolfInZooDivTwo().count(N, vector <string>(L, L + (sizeof L / sizeof L[0])), vector <string>(R, R + (sizeof R / sizeof R[0])));
 			return verify_case(casenum__, expected__, received__, clock()-start__);
 		}
-/*      case 5: {
-			int N                     = ;
-			string L[]                = ;
-			string R[]                = ;
-			int expected__            = ;
+      case 5: {
+			int N                     = 4;
+			string L[]                = "0 2";
+			string R[]                = "1 3";
+			int expected__            = 9;
 
 			clock_t start__           = clock();
 			int received__            = WolfInZooDivTwo().count(N, vector <string>(L, L + (sizeof L / sizeof L[0])), vector <string>(R, R + (sizeof R / sizeof R[0])));
 			return verify_case(casenum__, expected__, received__, clock()-start__);
-		}*/
-/*      case 6: {
-			int N                     = ;
-			string L[]                = ;
-			string R[]                = ;
-			int expected__            = ;
+		}
+      case 6: {
+			int N                     = 4;
+			string L[]                = "0 1 2";
+			string R[]                = "1 2 3";
+			int expected__            = 8;
 
 			clock_t start__           = clock();
 			int received__            = WolfInZooDivTwo().count(N, vector <string>(L, L + (sizeof L / sizeof L[0])), vector <string>(R, R + (sizeof R / sizeof R[0])));
 			return verify_case(casenum__, expected__, received__, clock()-start__);
-		}*/
+		}
 		default:
 			return -1;
 		}
