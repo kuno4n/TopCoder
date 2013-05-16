@@ -11,20 +11,7 @@
 #include <map>
 #include <stack>
 #include <queue>
-#include <cstdio>
-#include <cstdlib>
 #include <stdlib.h>
-#include <cmath>
-#include <ctime>
-#include <iostream>
-#include <algorithm>
-#include <sstream>
-#include <cstring>
-#include <vector>
-#include <set>
-#include <map>
-#include <stack>
-#include <queue>
 #include <numeric>
 //#include "cout.h"
 
@@ -52,36 +39,62 @@ class WolfInZooDivOne {
         stringstream ssl; ssl << sl;
         stringstream ssr; ssr << sr;
         VI ll;
-        VI RR;
+        VI rr;
         while(1){
             int l=-1, r=-1;
             ssl >> l; ssr >> r;
             if(l == -1) break;
             ll.push_back(l);
-            RR.push_back(r);
+            rr.push_back(r);
         }
         
         int two[350];
         REP(i, 350) two[i] = -1;
         REP(i, SZ(ll)){
-            if(RR[i] - ll[i] <= 1) continue;
+            if(rr[i] - ll[i] <= 1) continue;
             bool OK = true;
             REP(j, SZ(ll)){
                 if(i == j) continue;
-                if(ll[i] >= ll[j] && RR[i] <= RR[j]) OK = false;
+                if( (ll[i] >= ll[j] && rr[i] < rr[j]) || (ll[i] > ll[j] && rr[i] <= rr[j]) ) OK = false;
             }
-            if(OK) two[ll[i]] = RR[i];
+            if(OK) two[ll[i]] = rr[i];
         }
         
-        REP(i, 350) REP(j, 350) dp[350][350] = 0;
-        for(int j = 1; j < N; j++) dp[0][j] = 1;
+        REP(i, 350) REP(j, 350) dp[i][j] = 1;
         
         for(int i = 1; i < N-1; i++){
-            LL sum1 = 0, sum2 = 0, sum3 = 0;
             
-            
-            
+            int left1 = i;
+            for(int ii = i; ii >=0; ii--) if(two[ii] >= i) left1 = ii;
+			
+			LL sum1 = left1;
+			for(int a = 0; a <= left1-2; a++) for(int b = a+1; b <= left1-1; b++)
+				sum1 = (sum1 + dp[a][b]) % MOD;
+			
+			LL sum2 = 0;
+			int ptr = left1;
+			for(int j = i+1; j < N; j++){
+				int left2 = i;
+				for(int ii = i; ii >= 0; ii--) if(two[ii] >= j) left2 = ii;
+				if(left2 > ptr){
+					sum2 = (sum2 + left2-ptr) % MOD;
+					for(int a = 0; a <= left1-1; a++) for(int b = ptr; b <= left2-1; b++)
+						sum2 = (sum2 + dp[a][b]) % MOD;
+					ptr = left2;
+				}
+				dp[i][j] = (dp[i][j] + sum1 + sum2) % MOD;
+			}
+			
         }
+        
+//        for(int i = 0; i < N-1; i++) for(int j = i+1; j < N; j++){
+//			OUT(i);
+//			OUT(j);
+//			OUT(dp[i][j]);
+//		}
+        LL res = N + 1;
+        REP(i, N-1) for(int j = i+1; j < N; j++) res = (res + dp[i][j]) % MOD;
+        return res;
     }
 };
 
@@ -198,16 +211,16 @@ namespace moj_harness {
 
 		// custom cases
 
-/*      case 4: {
-			int N                     = ;
-			string L[]                = ;
-			string R[]                = ;
-			int expected__            = ;
+      case 4: {
+			int N                     = 6;
+			string L[]                = {"0 2 2 2 2 2"};
+			string R[]                = {"4 3 3 5 5 4"};
+			int expected__            = 29;
 
 			clock_t start__           = clock();
 			int received__            = WolfInZooDivOne().count(N, vector <string>(L, L + (sizeof L / sizeof L[0])), vector <string>(R, R + (sizeof R / sizeof R[0])));
 			return verify_case(casenum__, expected__, received__, clock()-start__);
-		}*/
+		}
 /*      case 5: {
 			int N                     = ;
 			string L[]                = ;
