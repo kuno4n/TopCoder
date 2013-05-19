@@ -33,7 +33,8 @@ using namespace std;
 #define MOD 1000000009
 #define INF (1<<30)-1
 
-long long str2int(string s)
+int bitcnt(LL a);
+long long str2int(string s);
 
 string int2str(LL a);
 string _int2str(LL a, int len);
@@ -69,6 +70,15 @@ long long modC(long long n, int k);
 
 
 
+
+int bitcnt(LL a){
+    int res = 0;
+    while(a != 0){
+        if(a&1) res++;
+        a >>= 1;
+    }
+    return res;
+}
 
 //--------------------------------
 // stringをintに変換。
