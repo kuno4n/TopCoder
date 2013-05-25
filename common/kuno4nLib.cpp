@@ -71,9 +71,9 @@ long long modC(long long n, int k);
 
 int bitcnt(LL a){
     int res = 0;
-    while(a != 0){
-        if(a&1) res++;
-        a >>= 1;
+    while(a){
+        a = a&(a-1);
+        res++;
     }
     return res;
 }
@@ -380,7 +380,7 @@ long long _Pow(long long x, long long y){
 //--------------------------------
 //最小２乗法を用いたpow。MOD版。
 long long modPow(long long x, long long y){
-    long long r=1, a=x;
+    long long r=1, a=x%MOD;
     while(y > 0){
         if((y&1) == 1) r = (r*a) % MOD;
         a = (a*a) % MOD;
@@ -401,7 +401,7 @@ long long modInverse(long long x){
 //--------------------------------
 //MODでの割り算。
 long long modDivision(long long p, long long q){
-    return (p*modInverse(q)) % MOD;
+    return (p*modInverse(q)) % MOD; //((p%MOD)*modInverse(q)) % MOD の方が安全？
 }
 
 //--------------------------------
@@ -472,7 +472,7 @@ namespace _mat{
         REP(i, SZ(A)){
             REP(k, SZ(B)){
                 REP(j, SZ(B[0])){
-                    C[i][j] = (C[i][j] + A[i][k]*B[k][j]); // MODある場合はここで
+                    C[i][j] = (C[i][j] + A[i][k]*B[k][j]); // MODある場合はここで。A[i][k]とかも先にMODしておく。かけ算でオーバーフローしちゃうから。
                 }
             }
         }
