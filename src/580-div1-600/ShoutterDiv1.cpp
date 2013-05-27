@@ -42,6 +42,7 @@ int n;
 int st_l, st_r;
 int s[3000], t[3000];	
 int dl[3000], dr[3000];
+int cnt[3000];
 
 class ShoutterDiv1 {
 public:
@@ -62,20 +63,31 @@ public:
 		n++;
 	}
 	st_l = 10000, st_r = -1;
-	REP(i, n){
-		st_l = min(st_l, t[i]);
-		st_r = max(st_r, s[i]);
-	}
-	REP(i, n) dl[i] = i, dr[i] = i;
+	REP(i, n) st_l = min(st_l, t[i]), st_r = max(st_r, s[i]);
+	MSET(dl, -1), MSET(dr, -1);
 	REP(i, n) REP(j, n){
-		if(s[i] <= t[j] && s[j] < s[dl[i]]) dl[i] = j;
-		if(s[j] <= t[i] && t[dr[i]] < t[j]) dr[i] = j;
+		if(s[i] <= t[j] && s[j] < s[i]) if(dl[i] == -1 || s[dl[i]] > s[j]) dl[i] = j;
+		if(s[j] <= t[i] && t[i] < t[j]) if(dr[i] == -1 || t[dr[i]] < t[j]) dr[i] = j;
 	}
-	int cnt = 0;
+	MSET(cnt, 0);
 	REP(i, n){
-		
+		int cur = i;
+		while(s[cur] > st_l){
+			if(dl[cur] == -1) return -1;
+			cnt[i]++;
+			cur = dl[cur];
+		}
+		cur = i;
+		while(t[cur] < st_r){
+			if(dr[cur] == -1) return -1;
+			cnt[i]++;
+			cur = dr[cur];
+		}
 	}
-	return cnt;
+	REP(i, n) REP(j, n) if(s[j] <= s[i] && t[i] <= t[j]) cnt[i] = min(cnt[i], cnt[j]+1);
+	int res = 0;
+	REP(i, n) res += cnt[i];
+	return res;
    }
 };
 
