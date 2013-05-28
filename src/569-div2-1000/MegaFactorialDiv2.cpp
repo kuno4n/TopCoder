@@ -30,8 +30,21 @@ using namespace std;
 #define OUT(A) cout << #A << " = "<< (A) << endl
 
 #define MOD 1000000009
-LL tab[1010][110];
+//LL tab[1010][110];
 
+LL C[2010][110];
+   
+void makepas(){
+    REP(i, 2010) REP(j, 110) C[i][j] = -1;
+    C[0][0] = 1;
+    for(int i=1; i<2000; i++){
+        C[i][0] = 1;
+        for(int j=1; j<min(i, 100); j++){
+			C[i][j] = (C[i-1][j-1] + C[i-1][j]) % MOD;
+		}
+        if(i <= 100) C[i][i] = 1;
+    }
+}
 
 map<int, int> prime_factor(long long l){
     map<int, int> res;
@@ -45,34 +58,28 @@ map<int, int> prime_factor(long long l){
     return res;
 }
 
-//LL rec(int fac, int n, int k){
-//	if(mem[n][k] != -1) return mem[n][k];
-//	if(n < fac) return mem[n][k] = 0;
-//	if(k == 0){
-//		if(n == fac) return mem[n][k] = 1;
-//		else return mem[n][k] = 0;
-//	}
-//	return mem[n][k] = (rec(fac, n, k-1) + rec(fac, n-1, k)) % MOD;
-//}
+LL primeAppear(int N, int K, int p){
+	LL res = 0;
+	for(int c = 1; p*c <= N; c++){
+		map<int, int> m = prime_factor(p*c);
+		res += C[N+K-1-p*c][K-1] * m[p];
+		res %= MOD;
+	}
+	return res;
+}
 
 
 class MegaFactorialDiv2 {
 public:
    int countDivisors( int N, int K ) {
-	MSET(tab, 0); tab[N][0] = 1;
-	for(int i = 1; i <= K; i++){
-		tab[i][N] = 1;
-		for(int j = N-1; j >= 2; j--) tab[i][j] = (tab[i][j+1] + tab[i-1][j]) % MOD;
-	} 
-	LL cnt[1010]; MSET(cnt, 0);
-	for(int i = 2; i <= N; i++){
-		map<int, int> m = prime_factor(i);
-		LL mul = tab[K][i];
-		FIT(it, m) cnt[it->first] = (cnt[it->first] + (it->second * mul) % MOD) % MOD;
-	}
+	makepas();
+	bool used[N+1]; REP(i, N+1) used[i] = false;
 	LL res = 1;
-	for(int i = 2; i <= N; i++) res = (res * ((cnt[i]+1)%MOD)) % MOD;
-	return res;	
+	for(int i = 2; i <= N; i++) if(!used[i]){
+		res = (res * (primeAppear(N, K, i) + 1)) % MOD;
+		for(int j = i; j <= N; j += i) used[j] = true;
+	}
+	return res;
    }
 };
 
