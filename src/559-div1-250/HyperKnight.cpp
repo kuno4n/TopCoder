@@ -26,34 +26,53 @@ using namespace std;
 
 class HyperKnight {
 	public:
-	long long countCells(int a, int b, int numRows, int numColumns, int k) {
-		LL dx[8] = {a,a,-a,-a,b,b,-b,-b};
-        LL dy[8] = {b,-b,b,-b,a,-a,a,-a};
-        LL exactly[256];
-        LL res = 0;
-        
-        for(int mask = 255; mask >= 0; mask--   ){
-            LL valid = 0;
-            int n = 0;
-            LL left = 0, right = 0, up = 0, down = 0;
-            REP(i, 8){
-                if(mask & 1<<i){
-                    n++;
-                    if(dx[i]<0) left = max(left, -dx[i]);
-                    else right = max(right, dx[i]);
-                    if(dy[i]<0) down = max(down, -dy[i]);
-                    else up = max(up, dy[i]);
-                }
-            }
-            valid = (numRows - left - right)*(numColumns - up - down);
-            exactly[mask] = valid;
-            for(int mask2 = mask+1; mask2<= 255; mask2++){
-                if( (mask & mask2) == mask){
-                    exactly[mask] -= exactly[mask2];
-                }
-            }
-            if(n == k) res += exactly[mask];
-        }
+	long long countCells(int _a, int _b, int _numRows, int _numColumns, int k) {
+		LL a = _a, b = _b, numRows = _numRows, numColumns = _numColumns;
+		if(a < b) swap(a, b);
+		LL cnt2, cnt3, cnt4, cnt6, cnt8;
+		cnt2 = b*b*4;
+		cnt3 = (a-b)*b*8;
+		cnt4 = (numColumns-a*2)*b*2 + (numRows-a*2)*b*2 + (a-b)*(a-b)*4;
+		cnt8 = (numRows-a*2)*(numColumns-a*2);
+		cnt6 = numRows*numColumns - cnt2 - cnt3 - cnt4 - cnt8;
+		if(k == 0) return 0;
+		if(k == 1) return 0;
+		if(k == 2) return cnt2;
+		if(k == 3) return cnt3;
+		if(k == 4) return cnt4;
+		if(k == 5) return 0;
+		if(k == 6) return cnt6;
+		if(k == 7) return 0;
+		if(k == 8) return cnt8;
+		
+		
+//		LL dx[8] = {a,a,-a,-a,b,b,-b,-b};
+//        LL dy[8] = {b,-b,b,-b,a,-a,a,-a};
+//        LL exactly[256];
+//        LL res = 0;
+//        
+//        for(int mask = 255; mask >= 0; mask--   ){
+//            LL valid = 0;
+//            kuno4nint n = 0;
+//            LL left = 0, right = 0, up = 0, down = 0;
+//            REP(i, 8){
+//                if(mask & 1<<i){
+//                    n++;
+//                    if(dx[i]<0) left = max(left, -dx[i]);
+//                    else right = max(right, dx[i]);
+//                    if(dy[i]<0) down = max(down, -dy[i]);
+//                    else up = max(up, dy[i]);
+//                }
+//            }
+//            valid = (numRows - left - right)*(numColumns - up - down);
+//            exactly[mask] = valid;
+//            for(int mask2 = mask+1; mask2<= 255; mask2++){
+//                if( (mask & mask2) == mask){
+//                    exactly[mask] -= exactly[mask2];
+//                }
+//            }
+//            if(n == k) res += exactly[mask];
+//        }
         
 //
 //        int mask = 1<<8;
@@ -76,8 +95,6 @@ class HyperKnight {
 //            if(tmp&(1<<i)) cnt++;
 //        }
 //        OUT(cnt);
-        
-        return res;
 	}
 };
 
