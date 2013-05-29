@@ -672,13 +672,15 @@ namespace Warshall_Floyd{
 
 // Vは、二部グラフの左の頂点数。
 // 「ここからまだフロー流せるか？」を左の頂点全てに対して行う。
-// ちなみに、Vは左右合わせた全部の頂点数でも問題ない。（左が終わった後に右からのをチェックしても、マッチ数は絶対増えない）
 
 namespace _bipartite_matching{
     const int MAX_V = 110;
     
-    int V;
-    VI G[MAX_V];
+    int V; // 左の頂点数。忘れずに設定すること。
+    // ちなみに、Vは左右合わせた全部の頂点数でも問題ない。（左が終わった後に右からのをチェックしても、マッチ数は絶対増えない）
+    
+    
+    VI G[MAX_V]; // ちゃんとGもケースごとに全部clear。
     int match[MAX_V];
     bool used[MAX_V];
     
