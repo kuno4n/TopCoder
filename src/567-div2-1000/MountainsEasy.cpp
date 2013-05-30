@@ -33,30 +33,30 @@ int h, w;
 int MOD = 1000000009;
 
 
-    const int MAX_N = 100;
-    LL nCr[MAX_N+1][MAX_N+1];
-    
-    void makepas(){
-        REP(i, MAX_N+1) REP(j, MAX_N+1) nCr[i][j] = -1;
-        for(int i=1; i<=MAX_N; i++){
-            nCr[i][0] = 1;
-            nCr[i][i] = 1;
-            for(int j=1; j<i; j++){
-                nCr[i][j] = (nCr[i-1][j-1] + nCr[i-1][j]) % MOD;
-            }
-        }
-    }
-
-
-long long modPow(long long x, long long y){
-    long long r=1, a=x%MOD;
-    while(y > 0){
-        if((y&1) == 1) r = (r*a) % MOD;
-        a = (a*a) % MOD;
-        y /= 2;
-    }
-    return r;
-}
+//    const int MAX_N = 100;
+//    LL nCr[MAX_N+1][MAX_N+1];
+//    
+//    void makepas(){
+//        REP(i, MAX_N+1) REP(j, MAX_N+1) nCr[i][j] = -1;
+//        for(int i=1; i<=MAX_N; i++){
+//            nCr[i][0] = 1;
+//            nCr[i][i] = 1;
+//            for(int j=1; j<i; j++){
+//                nCr[i][j] = (nCr[i-1][j-1] + nCr[i-1][j]) % MOD;
+//            }
+//        }
+//    }
+//
+//
+//long long modPow(long long x, long long y){
+//    long long r=1, a=x%MOD;
+//    while(y > 0){
+//        if((y&1) == 1) r = (r*a) % MOD;
+//        a = (a*a) % MOD;
+//        y /= 2;
+//    }
+//    return r;
+//}
 
 vector <string> p;
 
@@ -72,20 +72,30 @@ void erase(int y, int x){
 
 class MountainsEasy {
 public:
-   int countPlacements( vector <string> picture, int N ) {
-	h = SZ(picture), w = SZ(picture[0]); p = picture;
-	int peak = 0;
-	int Xcnt = 0;
-	REP(i, h) REP(j, w) if(p[i][j] == 'X') Xcnt++;
-	REP(i, h) REP(j, w) if(p[i][j] == 'X'){
-		peak++;
-		erase(i, j);
-	}
-	LL res = 0;
-	makepas();
-	for(int i = 0; i <= peak; i++) res = (res + nCr[peak][i]*modPow(Xcnt-i, N)*(i&1 ? -1 : 1) + MOD) % MOD;
-	return res;
-   }
+    int countPlacements( vector <string> picture, int N ) {
+        h = SZ(picture), w = SZ(picture[0]); p = picture;
+        int peak = 0;
+        int Xcnt = 0;
+        REP(i, h) REP(j, w) if(p[i][j] == 'X') Xcnt++;
+        REP(i, h) REP(j, w) if(p[i][j] == 'X'){
+            peak++;
+            erase(i, j);
+        }
+        
+        //	LL res = 0;
+        //	makepas();
+        //	for(int i = 0; i <= peak; i++) res = (res + nCr[peak][i]*modPow(Xcnt-i, N)*(i&1 ? -1 : 1) + MOD) % MOD;
+        //	return res;
+        
+        LL dp[N+1][peak+1];
+        MSET(dp, 0);
+        dp[0][0] = 1;
+        REP(i, N) REP(j, peak+1){
+            dp[i+1][j] = (dp[i+1][j] + dp[i][j]*(Xcnt-peak+j)) % MOD;
+            if(j < peak) dp[i+1][j+1] = dp[i][j]*(peak-j) % MOD;
+        }
+        return dp[N][peak];
+    }
 };
 
 // BEGIN CUT HERE
