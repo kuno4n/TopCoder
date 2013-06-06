@@ -31,22 +31,42 @@ using namespace std;
 
 int n;
 LL MOD = 1000000007;
+LL dp[400][400];
+LL res[400];
+
+void mul(LL *a, LL *b){
+    LL tmp[n]; MSET(tmp, 0);
+    REP(i, n) REP(j, n) tmp[(i+j)%n] = (tmp[(i+j)%n] + (a[i] * b[j])%MOD) % MOD;
+    REP(i, n) a[i] = tmp[i];
+}
+
+void _pow(LL x){
+    LL wk[n];
+    MSET(res, 0); MSET(wk, 0);
+    res[0] = 1;
+    REP(i, n) wk[i] = dp[n][i];
+    while(x){
+        if(x&1) mul(res, wk);
+        mul(wk, wk);
+        x >>= 1;
+    }
+}
 
 class PenguinEmperor {
 public:
-   int countJourneys( int numCities, long long daysPassed ) {
-	n = numCities;
-	LL dp[n+1][n]; MSET(dp, 0);
-	dp[0][0] = 1;
-	for(int i = 1; i <= n; i++){
-		REP(j, n){
-			dp[i][(j+i)%n] += dp[i-1][j];
-			if((j+i)%n != (j-i+n)%n) dp[i][(j-i+n)%n] += dp[i-1][j];
-		}
-	}
-	REP(i, n) OUT(dp[2][i]);
-
-   }
+    int countJourneys( int numCities, long long daysPassed ) {
+        n = numCities; MSET(dp, 0);
+        dp[0][0] = 1;
+        for(int i = 1; i <= n; i++){
+            REP(j, n){
+                dp[i][(j+i)%n] = (dp[i][(j+i)%n] + dp[i-1][j]) % MOD;
+                if((j+i)%n != (j-i+n)%n) dp[i][(j-i+n)%n] = (dp[i][(j-i+n)%n] + dp[i-1][j]) % MOD;
+            }
+        }
+        _pow(daysPassed/numCities);
+        mul(res, dp[daysPassed%numCities]);
+        return res[0];
+    }
 };
 
 // BEGIN CUT HERE
