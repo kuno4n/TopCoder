@@ -1013,6 +1013,18 @@ namespace vec{
 	double dist(P p, P q){
 		return (p - q).dot(p - q);
 	}
+	
+	// CCW : ConterClockWise
+	// 3頂点を回った時、反時計回りなら正
+	// 一直線上の場合、0になる。
+	double ccw(P p1, P p2, P p3){
+		return (p2-p1).det(p3-p1);
+	}
+	
+	// 三角形の面積。反時計回りなら正
+	double triangleArea(P p1, P p2, P p3){
+		return ((p2-p1).det(p3-p1))/2;
+	}
     
 }
 
