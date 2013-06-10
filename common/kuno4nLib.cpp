@@ -1032,6 +1032,93 @@ namespace vec{
 
 
 //--------------------------------
+//二次元ベクトル系ライブラリ。
+//整数のみで処理する場合。
+
+namespace vec2{
+    
+    struct P{
+        LL x, y;
+        P() {}
+        P(LL x, LL y) : x(x), y(y){
+        }
+        P operator + (P p){
+            return P(x+p.x, y+p.y);
+        }
+        P operator - (P p){
+            return P(x-p.x, y-p.y);
+        }
+        P operator * (LL d){
+            return P(x*d, y*d);
+        }
+        LL dot(P p){ // 内積
+            return x*p.x + y*p.y;
+        }
+        LL det(P p){ // 外積
+            return x*p.y - y*p.x;
+        }
+    };
+    
+    
+    //線分p1-p2と線分q1-q2が交差していたら、trueを返す。
+    //線分が重なっている場合はfalseを返す。
+    //端点で交わっている場合もfalseを返す。
+    bool intersect(P p1, P p2, P q1, P q2){
+        LL t1 = (p1.x - p2.x) * (p3.y - p1.y) + (p1.y - p2.y) * (p1.x - p3.x);
+        LL t2 = (p1.x - p2.x) * (p4.y - p1.y) + (p1.y - p2.y) * (p1.x - p4.x);
+        LL t3 = (p3.x - p4.x) * (p1.y - p3.y) + (p3.y - p4.y) * (p3.x - p1.x);
+        LL t4 = (p3.x - p4.x) * (p2.y - p3.y) + (p3.y - p4.y) * (p3.x - p2.x);
+    //t1*t2やt3*t4は結構大きくなるので（座標の4乗くらい）、やばかったらdoubleを使うこと。
+        if(t1*t2 < 0 && t3*t4 < 0) return true;
+        return false;
+    }
+
+	//辞書順で比較
+	bool cmp_x(const P& p, const P& q){
+		if(p.x != q.x) return p.x < q.x;
+		return p.y < q.y;
+	}
+    
+	//凸包を求める。
+	//nは要素数。
+	//psはpの配列で渡すこと。
+	vector<P> convex_hull(P* ps, int n){
+		sort(ps, ps+n, cmp_x);
+		int k = 0;
+		vector<P> qs(n*2);
+		REP(i, n){
+			while(k>1 && (qs[k-1] - qs[k-2]).det(ps[i] - qs[k-1]) <= 0) k--;
+			qs[k++] = ps[i];
+		}
+		for(int i=n-2, t=k; i>=0; i--){
+			while(k>t && (qs[k-1] - qs[k-2]).det(ps[i] - qs[k-1]) <= 0) k--;
+			qs[k++] = ps[i];
+		}
+		qs.resize(k-1);
+		return qs;
+	}
+
+	// 距離の二乗
+	LL dist(P p, P q){
+		return (p - q).dot(p - q);
+	}
+	
+	// CCW : ConterClockWise
+	// 3頂点を回った時、反時計回りなら正
+	// 一直線上の場合、0になる。
+	LL ccw(P p1, P p2, P p3){
+		return (p2-p1).det(p3-p1);
+	}
+	
+	// 三角形の面積。反時計回りなら正
+	double triangleArea(P p1, P p2, P p3){
+		return ((p2-p1).det(p3-p1))/2.0;
+	}
+    
+}
+
+
+//--------------------------------
 // 連立方程式。O(n);
 
 namespace gauss_jordan{
