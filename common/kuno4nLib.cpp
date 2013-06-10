@@ -29,6 +29,8 @@ using namespace std;
 #define ALL(v) (v).begin(), (v).end()
 #define FIT(it,v) for (typeof((v).begin()) it = (v).begin(); it != (v).end(); it++)
 #define OUT(A) cout << #A << " = "<< (A) << endl
+template<class T> void chmin(T &t, T f) { if (t > f) t = f; } 
+template<class T> void chmax(T &t, T f) { if (t < f) t = f; } 
 
 #define MOD 1000000009
 #define INF (1<<30)-1
