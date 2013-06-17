@@ -71,13 +71,24 @@ long long modDivision(long long p, long long q);
 long long modC(long long n, int k);
 
 
-int bitcnt(LL a){
-    int res = 0;
-    while(a){
-        a = a&(a-1);
-        res++;
-    }
-    return res;
+// vector <string> vs = {"34 22 1", "00, 54"} みたいに入っている数値を、
+// int a[300] みたいな配列に入れて、要素数をnに入れる。
+// parse(vs, a, n); みたいに呼ぶ
+void parse(vector<string> &s, int *a, int &n){
+	n = 0;
+	string t;
+	REP(i, s.size()) t += s[i];
+	stringstream ss(t);
+	while(ss >> a[n]) n++;
+}
+
+int bitcnt(LL bits)
+{
+    bits = (bits & 0x55555555) + (bits >> 1 & 0x55555555);
+    bits = (bits & 0x33333333) + (bits >> 2 & 0x33333333);
+    bits = (bits & 0x0f0f0f0f) + (bits >> 4 & 0x0f0f0f0f);
+    bits = (bits & 0x00ff00ff) + (bits >> 8 & 0x00ff00ff);
+    return (bits & 0x0000ffff) + (bits >>16 & 0x0000ffff);
 }
 
 //--------------------------------
