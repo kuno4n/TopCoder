@@ -82,7 +82,14 @@ void parse(vector<string> &s, int *a, int &n){
 	while(ss >> a[n]) n++;
 }
 
-int bitcnt(LL bits)
+int bitcnt(LL n)
+{
+    int c;
+    for(c=0;n!=0;c++,n&=n-1) ;
+    return c;
+}
+
+int bitcnt2(int bits)
 {
     bits = (bits & 0x55555555) + (bits >> 1 & 0x55555555);
     bits = (bits & 0x33333333) + (bits >> 2 & 0x33333333);
