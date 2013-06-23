@@ -1172,6 +1172,148 @@ namespace gauss_jordan{
 
 
 
+//--------------------------------
+// 数え上げ問題
+// n個のボールを、m個の箱に入れる
+// （nのm分割）
+// dp[m][n]が答え
+
+// n:区別できるか m:区別できるか 分割の方法
+// で 2*2*3 = 12 通り
+
+namespace count{
+    const int MAX_N = 100, MAX_M = 100;
+    int dp[MAX_N][MAX_M];
+    
+    
+    // 1-1
+    // n: 区別できる
+    // m: 区別できる
+    // ちょうどm個への分割（最低一個は入れる）
+    int count_1_1(int n, int m){
+		
+		
+		
+		return dp[m][n];
+	}
+    
+    
+    // 1-2
+    // n: 区別できる
+    // m: 区別できる
+    // m個以下への分割
+    int count_1_2(int n, int m){
+		return _Pow(m, n);
+	}
+    
+    
+    // 1-3
+    // n: 区別できる
+    // m: 区別できる
+    // 箱には高々1個しか入らない（n > m のとき 0）
+    int count_1_3(int n, int m){
+		if(n > m) return 0;
+		
+	}
+    
+    
+    // 2-1
+    // n: 区別できる
+    // m: 区別できない
+    // ちょうどm個への分割（最低一個は入れる）
+    int count_2_1(int n, int m){
+		
+		
+		return dp[m][n];
+	}
+    
+    
+    // 2-2
+    // n: 区別できる
+    // m: 区別できない
+    // m個以下への分割
+    int count_2_2(int n, int m){
+		
+		
+		return dp[m][n];
+	}
+    
+    
+    // 2-3
+    // n: 区別できる
+    // m: 区別できない
+    // 箱には高々1個しか入らない（n > m のとき 0）
+    int count_2_3(int n, int m){
+		if(n > m) return 0;
+		
+	}
+    
+    
+    // 3-1
+    // n: 区別できない
+    // m: 区別できる
+    // ちょうどm個への分割（最低一個は入れる）
+    int count_3_1(int n, int m){
+		
+		
+		return dp[m][n];
+	}
+    
+    
+    // 3-2
+    // n: 区別できない
+    // m: 区別できる
+    // m個以下への分割
+    int count_3_2(int n, int m){
+		
+		
+		return dp[m][n];
+	}
+    
+    
+    // 3-3
+    // n: 区別できない
+    // m: 区別できる
+    // 箱には高々1個しか入らない（n > m のとき 0）
+    int count_3_3(int n, int m){
+		if(n > m) return 0;
+		
+	}
+    
+    
+    // 4-1
+    // n: 区別できない
+    // m: 区別できない
+    // ちょうどm個への分割（最低一個は入れる）
+    int count_4_1(int n, int m){
+		
+		
+		return dp[m][n];
+	}
+    
+    
+    // 4-2
+    // n: 区別できない
+    // m: 区別できない
+    // m個以下への分割
+    int count_4_2(int n, int m){
+		
+		
+		return dp[m][n];
+	}
+    
+    
+    // 4-3
+    // n: 区別できない
+    // m: 区別できない
+    // 箱には高々1個しか入らない（n > m のとき 0）
+    int count_4_3(int n, int m){
+		if(n > m) return 0;
+		return 1;
+	}
+}
+
+
 
 
 namespace unittest {
