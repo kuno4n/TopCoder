@@ -62,6 +62,7 @@ long long lcm(long long a, long long b);
 long long extgcd(long long a, long long b, long long& x, long long& y);
 
 long long fact(int n);
+long long modFact(int n);
 long long nCr(long long n, long long r);
 long long _nCr(long long n, long long r);
 
@@ -354,6 +355,16 @@ long long fact(int n){
     return res;
 }
 
+long long modFact(int n){
+    long long res = 1;
+    while(n!=1){
+        res = (res*n) % MOD;
+        n--;
+    }
+    return res;
+}
+
+
 //--------------------------------
 //単純な組み合わせ。
 long long nCr(long long n, long long r)
@@ -365,14 +376,15 @@ long long nCr(long long n, long long r)
 
 //--------------------------------
 //パスカルの三角形使った組み合わせ。
-//0Cr、n<rのとき、注意のため-1としている。（0Crは1としておくと組み合わせのとき楽かも）
+//0Cr、n<rのとき、0としている。（0Crは1としておくと組み合わせのとき楽かも）
+//（少なくとも0C0は1？）
 //nC0は1。
 namespace pas {
     const int MAX_N = 1000;
     LL nCr[MAX_N+1][MAX_N+1];
     
     void makepas(){
-        REP(i, MAX_N+1) REP(j, MAX_N+1) nCr[i][j] = -1;
+        REP(i, MAX_N+1) REP(j, MAX_N+1) nCr[i][j] = 0;
         for(int i=1; i<=MAX_N; i++){
             nCr[i][0] = 1;
             nCr[i][i] = 1;
@@ -1081,10 +1093,10 @@ namespace vec2{
     };
     
     
-    //線分p1-p2と線分q1-q2が交差していたら、trueを返す。
+    //線分p1-p2と線分p3-p4が交差していたら、trueを返す。
     //線分が重なっている場合はfalseを返す。
     //端点で交わっている場合もfalseを返す。
-    bool intersect(P p1, P p2, P q1, P q2){
+    bool intersect(P p1, P p2, P p3, P p4){
         LL t1 = (p1.x - p2.x) * (p3.y - p1.y) + (p1.y - p2.y) * (p1.x - p3.x);
         LL t2 = (p1.x - p2.x) * (p4.y - p1.y) + (p1.y - p2.y) * (p1.x - p4.x);
         LL t3 = (p3.x - p4.x) * (p1.y - p3.y) + (p3.y - p4.y) * (p3.x - p1.x);
@@ -1175,142 +1187,428 @@ namespace gauss_jordan{
 //--------------------------------
 // 数え上げ問題
 // n個のボールを、m個の箱に入れる
-// （nのm分割）
-// dp[m][n]が答え
 
-// n:区別できるか m:区別できるか 分割の方法
+// ①nが区別できるか ②mが区別できるか ③分割の方法
 // で 2*2*3 = 12 通り
 
 namespace count{
     const int MAX_N = 100, MAX_M = 100;
-    int dp[MAX_N][MAX_M];
+    LL dp[MAX_N][MAX_M];
+    LL C[MAX_N+1][MAX_M+1];
+    
+    void makepas(){
+		REP(i, MAX_N+1) REP(j, MAX_N+1) C[i][j] = 0;
+		C[0][0] = 1;
+        for(int i=1; i<=MAX_N; i++){
+            C[i][0] = 1;
+            C[i][i] = 1;
+            for(int j=1; j<i; j++){
+                C[i][j] = (C[i-1][j-1] + C[i-1][j]) % MOD;
+            }
+        }
+	}    
+    
+    void add(LL &a, LL b){
+		a = (a + b) % MOD;
+	}
+    
+    void sub(LL &a, LL b){
+		a = (a - b + MOD) % MOD;
+	}
+    
+    void mul(LL &a, LL b){
+		a = (a * b) % MOD;
+	}
     
     
-    // 1-1
+    // 1-1-1
     // n: 区別できる
     // m: 区別できる
     // ちょうどm個への分割（最低一個は入れる）
-    int count_1_1(int n, int m){
+    
+    // S(n, m) = S(n-1, m)*m + S(n-1, m-1)*m
+    
+    int count_1_1_1(int n, int m){
 		
+//		cout << endl;
+//		OUT2(n, m);
 		
+		//包除原理
+		LL res = 0;
+		makepas();
+		for(int i = 1; i <= m; i++){
+			LL tmp = (C[m][i] * modPow(i, n)) % MOD;
+			if((m-i)&1) sub(res, tmp);
+			else add(res, tmp);
+		}
+//		OUT(res);
 		
-		return dp[m][n];
+		//dp
+		MSET(dp, 0); dp[0][0] = 1;
+		for(int i = 1; i <= n; i++) for(int j = 1; j <= m; j++){
+			LL tmp = 0;
+			add(tmp, (dp[i-1][j] * j)  % MOD);   // i-1個のボールがj個の箱に入っている状態で、i個目のボールを入れる場合
+			add(tmp, (dp[i-1][j-1] * j)  % MOD); // i-1個のボールがj-1個の箱に入っている状態で、i個目のボールは新しい箱に入れる場合
+			add(dp[i][j], tmp);
+		}
+//		OUT(dp[n][m]);
+		
+		return res;
 	}
     
     
-    // 1-2
+    // 1-1-2
     // n: 区別できる
     // m: 区別できる
     // m個以下への分割
-    int count_1_2(int n, int m){
-		return _Pow(m, n);
+    int count_1_1_2(int n, int m){
+		cout << endl;
+		OUT2(n, m);
+		
+		int res = modPow(m, n);
+		OUT(res);
+		return res;
 	}
     
     
-    // 1-3
+    // 1-1-3
     // n: 区別できる
     // m: 区別できる
     // 箱には高々1個しか入らない（n > m のとき 0）
-    int count_1_3(int n, int m){
-		if(n > m) return 0;
+    int count_1_1_3(int n, int m){
+		cout << endl;
+		OUT2(n, m);
 		
+		// mPn を返せば良い
+		LL res;
+		if(n > m) res = 0;
+		else{
+			res = 1;
+			while(n--) mul(res, m--);
+		}
+		
+		OUT(res);
+		return res;
 	}
     
     
-    // 2-1
+    // 1-2-1
     // n: 区別できる
     // m: 区別できない
     // ちょうどm個への分割（最低一個は入れる）
-    int count_2_1(int n, int m){
+    
+    // 第二種スターリング数と呼ばれる
+    // S(n, m) = S(n-1, m)*m + S(n-1, m-1)
+    
+    int count_1_2_1(int n, int m){
+//		cout << endl;
+//		OUT2(n, m);
+		
+		// 1-1-1をm!で割る。
+		// MODが素数の時のみ可。
+		LL res = modDivision(count_1_1_1(n, m), modFact(m));
+//		OUT(res);
 		
 		
-		return dp[m][n];
+		//dpでやる場合
+		MSET(dp, 0); dp[0][0] = 1;
+		for(int i = 1; i <= n; i++) for(int j = 1; j <= m; j++){
+			LL tmp = 0;
+			add(tmp, (dp[i-1][j] * j)  % MOD);   // i-1個のボールがj個の箱に入っている状態で、i個目のボールを入れる場合。この場合はj通り区別できる。
+			add(tmp, dp[i-1][j-1]); // i-1個のボールがj-1個の箱に入っている状態で、i個目のボールは新しい箱に入れる場合。この場合は区別できない。
+			add(dp[i][j], tmp);
+		}
+//		OUT(dp[n][m]);
+		
+		return res;
 	}
     
     
-    // 2-2
+    
+    // 1-2-2
     // n: 区別できる
     // m: 区別できない
     // m個以下への分割
-    int count_2_2(int n, int m){
+    
+    // n = m のとき、ベル数と呼ばれる。
+    // ベル数は「n個の区別できるものを、空でないいくつかのまとまりに分ける場合の数」
+    
+    int count_1_2_2(int n, int m){
+		cout << endl;
+		OUT2(n, m);
+		
+		LL res = 0;
+		
+		// 1-2-1を全部足し合わせる。
+		// 例えば、n=10, m=7だったら、「箱が1個」「箱が2個」・・・「箱が7個」を足し合わせる。
+		for(int i = 1; i <= m; i++) add(res, count_1_2_1(n, i)); 
+		OUT(res);
 		
 		
-		return dp[m][n];
+		// dpでやる場合
+		// 1-2-1のdpを前もってやっとく。
+		// そして例えば、1-2-2のdp[10][7]を計算するときは、1-2-2のdp[10][6]（この中に、箱１個使う～箱６個使う、が全て含まれている）と、
+		// 1-2-1のdp[10][7]（箱７個使う）を足せば良い。
+		// もちろん、答えが欲しいだけなら、1-2-1のdp[10][1]～dp[10][7]を足せば良い。
+		
+		LL dp1[MAX_N][MAX_M];
+		MSET(dp1, 0); dp1[0][0] = 1;
+		for(int i = 1; i <= n; i++) for(int j = 1; j <= m; j++){
+			LL tmp = 0;
+			add(tmp, (dp1[i-1][j] * j)  % MOD);
+			add(tmp, dp1[i-1][j-1]);
+			add(dp1[i][j], tmp);
+		}
+		
+		LL dp2[MAX_N][MAX_M];
+		MSET(dp2, 0);
+		for(int i = 1; i <= n; i++) for(int j = 1; j <= m; j++){
+			add(dp2[i][j], dp2[i][j-1]);
+			add(dp2[i][j], dp1[i][j]);
+		}
+		OUT(dp2[n][m]);
+		
+		
+		return res;
+	}
+	
+	
+	
+	// 1-2-2に付随して、ベル数。
+    // ベル数は「n個の区別できるものを、空でないいくつかのまとまりに分ける場合の数」
+    // B(n+1) = Σ(C[n][k]*B(k))
+    
+    // 上記の式の考え方。例えばB(9)を計算するときは、
+    // 「1～8番のボールのうち、9番と一緒にしないボールをk個選ぶ。このk個のバラけ方はB(k)」
+    // であり、kを0～8ととして足せば良い。
+    
+    int bell(int n){
+		cout << endl;
+		OUT(n);
+		
+		makepas();
+		
+		LL dp[MAX_N];
+		MSET(dp, 0); dp[0] = 1;
+		for(int i = 1; i <= n; i++) for(int j = 0; j <= i-1; j++) add(dp[i], (C[i-1][j]*dp[j])%MOD);
+		
+		LL res = dp[n];
+		OUT(res);
+		return res;
 	}
     
     
-    // 2-3
+    
+    // 1-2-3
     // n: 区別できる
     // m: 区別できない
     // 箱には高々1個しか入らない（n > m のとき 0）
-    int count_2_3(int n, int m){
-		if(n > m) return 0;
+    int count_1_2_3(int n, int m){
+		cout << endl;
+		OUT2(n, m);
 		
+		LL res;
+		if(n > m) res = 0;
+		else res = 1;
+		
+		OUT(res);
+		return res;
 	}
     
     
-    // 3-1
+    // 2-1-1
     // n: 区別できない
     // m: 区別できる
     // ちょうどm個への分割（最低一個は入れる）
-    int count_3_1(int n, int m){
+    int count_2_1_1(int n, int m){
+		cout << endl;
+		OUT2(n, m);
 		
+		// n個並べたボールの合間にm-1個の仕切りを入れる。
+		// C[n-1][m-1]
 		
-		return dp[m][n];
+		LL res;
+		
+		if(n == 0 || m == 0) res = 0;
+		else{
+			makepas();
+			res = C[n-1][m-1];
+		}
+		
+		// 包除原理でもいい。
+		
+		OUT(res);
+		return res;
 	}
     
     
-    // 3-2
+    // 2-1-2
     // n: 区別できない
     // m: 区別できる
     // m個以下への分割
-    int count_3_2(int n, int m){
+    int count_2_1_2(int n, int m){
+		cout << endl;
+		OUT2(n, m);
 		
+		LL res;
 		
-		return dp[m][n];
+		// 重複組合せ。nHm。
+		if(n == 0 || m == 0) res = 0;
+		else{
+			makepas();
+			res = C[n+m-1][m-1]; // 3H5 だったら、8個のボールを5個の箱に、必ず一つ入れると考える
+		}
+		
+		// ちなみにdpでやると
+		MSET(dp, 0); dp[0][0] = 1;
+		for(int i = 0; i <= n; i++) for(int j = 1; j <= m; j++){
+			for(int k = 0; k <= i; k++) add(dp[i][j], dp[i-k][j-1]); // j番目の箱にはk個入れる。合計i個になるように。
+		}
+		
+		OUT(res);
+		OUT(dp[n][m]);
+		return res;
 	}
     
     
-    // 3-3
+    // 2-1-3
     // n: 区別できない
     // m: 区別できる
     // 箱には高々1個しか入らない（n > m のとき 0）
-    int count_3_3(int n, int m){
-		if(n > m) return 0;
+    int count_2_1_3(int n, int m){
+		cout << endl;
+		OUT2(n, m);
 		
+		makepas();
+		LL res = C[m][n];
+		
+		
+		OUT(res);
+		return res;
 	}
     
     
-    // 4-1
+    // 2-2-1
     // n: 区別できない
     // m: 区別できない
     // ちょうどm個への分割（最低一個は入れる）
-    int count_4_1(int n, int m){
+    int count_2_2_1(int n, int m){
+		cout << endl;
+		OUT2(n, m);
 		
+		MSET(dp, 0); dp[0][0] = 1;
+		for(int i = 1; i <= n; i++) for(int j = 1; j <= m; j++){
+			add(dp[i][j], dp[i-1][j-1]); // ボール1個の箱が少なくとも1つある場合。1個箱に入れて、残りi-1個をj-1個の箱に分ける。
+			if(i >= j) add(dp[i][j], dp[i-j][j]); // ボール1個の箱が無い場合。まず1個づつ、j個の箱に入れてしまう。残りi-j個をj個の箱に分ける。 
+		}
 		
-		return dp[m][n];
+		LL res = dp[n][m];
+		OUT(res);
+		return res;
 	}
     
     
-    // 4-2
+    // 2-2-2
     // n: 区別できない
     // m: 区別できない
     // m個以下への分割
-    int count_4_2(int n, int m){
+    int count_2_2_2(int n, int m){
+		cout << endl;
+		OUT2(n, m);
 		
+		// 2-2-1を計算して、1～mのsumをとっても良い。
+		MSET(dp, 0); dp[0][0] = 1;
+		for(int i = 1; i <= n; i++) for(int j = 1; j <= m; j++){
+			add(dp[i][j], dp[i-1][j-1]); 
+			if(i >= j) add(dp[i][j], dp[i-j][j]); 
+		}
 		
-		return dp[m][n];
+		LL res = 0;
+		for(int i = 1; i <= m; i++) add(res, dp[n][i]);
+		OUT(res);
+		
+		// もしくは、
+		MSET(dp, 0); dp[0][0] = 1;
+		for(int i = 0; i <= n; i++) for(int j = 1; j <= m; j++){
+			add(dp[i][j], dp[i][j-1]); // j-1個以下の箱に入れる場合
+			if(i >= j) add(dp[i][j], dp[i-j][j]); // 必ずj個使う場合（最初に一個づつ入れてしまう））
+		}
+		OUT(dp[n][m]);
+		
+		return res;
 	}
     
     
-    // 4-3
+    // 2-2-3
     // n: 区別できない
     // m: 区別できない
     // 箱には高々1個しか入らない（n > m のとき 0）
-    int count_4_3(int n, int m){
-		if(n > m) return 0;
-		return 1;
+    int count_2_2_3(int n, int m){
+		cout << endl;
+		OUT2(n, m);
+		
+		LL res;
+		if(n > m) res = 0;
+		else res = 1;
+		
+		OUT(res);
+		return res;
 	}
+	
+	
+	// カタラン数 C(n)
+	// ・n対のpush・popの正しい並べ方
+	// ・n対の括弧の正しい並べ方
+	// ・n*nの格子で(1, 1)から(n, n)に対角線より反対に行かないような行き方
+	// ・n+1チームのトーナメント
+	// ・n+1項目の足し算の括弧の付け方 1+((2+3)+4) とか
+	// ・1～2nの数字を2×nの枠に、上から下、左から右に大きくなるような並べ方
+	// ・n+2角形の三角形への分け方
+	// ・2n人が輪になって手を交差しないような手のつなぎ方
+	// 　　・・・など
+	int catalan(int n){
+		OUT(n);
+		
+		makepas();
+		int res = C[2*n][n] - C[2*n][n-1];
+		// C[2*n][n] / (n+1) ともかける
+		res = (res + MOD) % MOD;
+		
+		
+		// トーナメント戦で、iチームのトーナメント戦は、
+		// jチームのトーナメントの優勝者 対 i-jチームのトーナメントの優勝者
+		// と考えると
+		LL dp[100];  MSET(dp, 0);
+		dp[1] = 1;
+		for(int i = 2; i <= n+1; i++){
+			for(int j = 1; j < i; j++) add(dp[i], (dp[j]*dp[i-j]) % MOD);
+		}
+		OUT(dp[n+1]);
+		
+		OUT(res);
+		return res;
+	}
+	
+	
+	
+	// おまけ
+	// 1～nのボールを、1～nの箱に、番号が異なるように入れる入れ方
+	int diffcnt(int n){
+		OUT(n);
+		
+		LL dp[100];  MSET(dp, 0);
+		dp[1] = 0; dp[2] = 1;
+		for(int i = 3; i <= n; i++) dp[i] = ((i-1) * ((dp[i-2] + dp[i-1]) % MOD)) % MOD;
+		// まず、i番のボールを1～i-1のどれかの箱に入れる（これでi-1通り）（k番の箱に入れたとする）
+		// dp[i-2] は、k番のボールをi番の箱に入れた時。
+		// dp[i-1] は、k番のボールをi番の箱に入れない時。このとき、1～i-1番のボール全て、入れられない箱が1個あるわけだから、結局dp[i-1]となる。
+		
+		LL res = dp[n];
+		OUT(res);
+		return res;
+	}
+	
+	
 }
 
 
@@ -1590,6 +1888,40 @@ namespace unittest {
                 
             case 40 : {
                 _bipartite_matching::V = 4;
+                return 1;
+            }
+            case 50 : {
+//                count::count_1_2_2(1,1);
+//                count::count_1_2_2(1,2);
+//                count::count_1_2_2(1,3);
+//                count::count_1_2_2(1,4);
+//                count::count_1_2_2(1,5);
+//                count::count_1_2_2(2,1);
+//                count::count_1_2_2(2,2);
+//                count::count_1_2_2(2,3);
+//                count::count_1_2_2(2,4);
+//                count::count_1_2_2(2,5);
+//                count::count_1_2_2(3,1);
+//                count::count_1_2_2(3,2);
+//                count::count_1_2_2(3,3);
+//                count::count_1_2_2(3,4);
+//                count::count_1_2_2(3,5);
+//                count::count_1_2_2(4,1);
+//                count::count_1_2_2(4,2);
+//                count::count_1_2_2(4,3);
+//                count::count_1_2_2(4,4);
+//                count::count_1_2_2(4,5);
+//                count::count_1_2_2(5,1);
+//                count::count_1_2_2(5,2);
+//                count::count_1_2_2(5,3);
+//                count::count_1_2_2(5,4);
+//                count::count_1_2_2(5,5);
+//                count::count_1_2_2(99,60);
+
+                count::diffcnt(2);
+                count::diffcnt(3);
+                count::diffcnt(4);
+                
                 return 1;
             }
             case 999 : {
