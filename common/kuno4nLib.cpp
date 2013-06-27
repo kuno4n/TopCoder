@@ -79,7 +79,7 @@ long long modC(long long n, int k);
 void parse(vector<string> &s, int *a, int &n){
 	n = 0;
 	string t;
-	REP(i, s.size()) t += s[i];
+	REP(i, SZ(s)) t += s[i];
 	stringstream ss(t);
 	while(ss >> a[n]) n++;
 }
@@ -1613,6 +1613,45 @@ namespace count{
 
 
 
+//--------------------------------
+//有名問題集。
+
+namespace prob{
+    
+    // 最大部分列和 (Maximum Segment Sum : MSS)
+    // O(n)
+    int MSS(vector<int> a){
+        int mss, s;
+        mss = s = 0;
+        REP(i, SZ(a)){
+            s += a[i];
+            chmax(s, 0);
+            chmax(mss, s);
+        }
+        return mss;
+    }
+    
+    // 最長増加部分列 (Longest Increasing Subsequence : LIS)
+    // O(nlogn)
+    vector<int> LIS(vector<int> a){
+        int dp[100]; REP(i, 100) dp[i] = INF;
+        REP(i, SZ(a)) *lower_bound(dp, dp+100, a[i]) = a[i];
+        vector<int> res;
+        REP(i, lower_bound(dp, dp+100, INF)-dp) res.push_back(dp[i]);
+        return res;
+    }
+    
+    
+}
+
+
+
+
+
+
+
+
+
 
 namespace unittest {
 	int  run_test_case(int);
@@ -1751,7 +1790,7 @@ namespace unittest {
 				
                 cout << endl;
 				int c[4] = {4,2,10,5};
-				VI d(c,&c[3]); //こんな初期化も出来る
+				VI d(c,&c[4]); //こんな初期化も出来る
 				d.insert(d.begin(), 6); //先頭にinsert
                 FIT(it, d) OUT(*it);
                 
@@ -1923,6 +1962,14 @@ namespace unittest {
                 count::diffcnt(4);
                 
                 return 1;
+            }
+            case 60 : {
+                int a[5] = {3,-1,4,-2,-1};
+                VI b(a, &a[5]);
+                OUT(prob::MSS(b));
+                int c[6] = {40,10,20,50,30,35};
+                VI d(c, &c[6]);
+                OUT(prob::LIS(d));
             }
             case 999 : {
                 return 1;
