@@ -1596,6 +1596,8 @@ namespace count{
 	int diffcnt(int n){
 		OUT(n);
 		
+		// 包除原理でもできるはず
+		
 		LL dp[100];  MSET(dp, 0);
 		dp[1] = 0; dp[2] = 1;
 		for(int i = 3; i <= n; i++) dp[i] = ((i-1) * ((dp[i-2] + dp[i-1]) % MOD)) % MOD;
@@ -1619,29 +1621,74 @@ namespace count{
 namespace prob{
     
     // 最大部分列和 (Maximum Segment Sum : MSS)
+    // {3,-4,2,3,-1,2}であれば6が解
     // O(n)
+    // 下記のO(n)解法はそんなに直感的ではない
     int MSS(vector<int> a){
         int mss, s;
         mss = s = 0;
         REP(i, SZ(a)){
             s += a[i];
-            chmax(s, 0);
+            chmax(s, 0); // 0を下回ったらリセット
             chmax(mss, s);
         }
         return mss;
     }
     
     // 最長増加部分列 (Longest Increasing Subsequence : LIS)
+    // {40,10,20,50,30,35} であれば{10,20,30,35}が解
     // O(nlogn)
     vector<int> LIS(vector<int> a){
         int dp[100]; REP(i, 100) dp[i] = INF;
-        REP(i, SZ(a)) *lower_bound(dp, dp+100, a[i]) = a[i];
+        REP(i, SZ(a)) *lower_bound(dp, dp+100, a[i]) = a[i]; //「a[i]を最後尾とするような最長増加部分列の長さ」をk+1としたとき、dp[k]を（a[i]のほうが小さければ）更新していく。
         vector<int> res;
         REP(i, lower_bound(dp, dp+100, INF)-dp) res.push_back(dp[i]);
         return res;
     }
     
-    
+    // 最長共通部分列 (Longest Common Subsequence : LCS)
+    // 例えば"abcfbc" と "abfcab" であれば "abfc" や "abcb" の長さが解
+    // O(n*m)
+    int LCS(string s1, string s2){
+		int dp[100][100]; MSET(dp, 0);
+		for(int i = 1; i <= SZ(s1); i++) for(int j = 1; j <= SZ(s2); j++){
+			if(s1[i-1] == s2[j-1]) dp[i][j] = dp[i-1][j-1] + 1; // 最後の一文字が一緒であれば、両方一文字前までの値+1
+			else dp[i][j] = max(dp[i-1][j], dp[i][j-1]);// 最後の一文字が異なっていれば、片方一文字前までの値の大きい方
+		}
+		int res = dp[SZ(s1)][SZ(s2)];
+		return res;
+	}
+	
+	// 編集距離 (レーベンシュタイン距離, Levenshtein Distance) 
+	// 削除と挿入でコスト１
+	// 例えば"darling" と"airline"であれば
+	// darling → arling → airling → airlin → airline の4手が解
+	// O(n*m)
+	// LCSと考え方は似ている
+	 int LD(string s1, string s2){
+		int dp[100][100]; MSET(dp, 0);
+		for(int i = 1; i <= SZ(s1); i++) dp[i][0] = i;
+		for(int j = 1; j <= SZ(s2); j++) dp[0][j] = j;
+		for(int i = 1; i <= SZ(s1); i++) for(int j = 1; j <= SZ(s2); j++){
+			if(s1[i-1] == s2[j-1]) dp[i][j] = dp[i-1][j-1]; // 最後の一文字が一緒であれば、両方一文字前のコストと同じ
+			else dp[i][j] = min(dp[i-1][j]+1, dp[i][j-1]+1); // 最後の一文字が異なっていれば、片方一文字前の状態に一文字挿入
+		}
+		int res = dp[SZ(s1)][SZ(s2)];
+		
+		// 更新でもコスト１とする場合
+		// darling → arling → airling → airline の3手が解
+		MSET(dp, 0);
+		for(int i = 1; i <= SZ(s1); i++) dp[i][0] = i;
+		for(int j = 1; j <= SZ(s2); j++) dp[0][j] = j;
+		for(int i = 1; i <= SZ(s1); i++) for(int j = 1; j <= SZ(s2); j++){
+			if(s1[i-1] == s2[j-1]) dp[i][j] = dp[i-1][j-1]; 
+			else dp[i][j] = min(min(dp[i-1][j]+1, dp[i][j-1]+1), dp[i-1][j-1]+1); 
+		}
+		OUT(dp[SZ(s1)][SZ(s2)]);
+		
+		return res;
+		
+	}
 }
 
 
@@ -1970,6 +2017,9 @@ namespace unittest {
                 int c[6] = {40,10,20,50,30,35};
                 VI d(c, &c[6]);
                 OUT(prob::LIS(d));
+                OUT(prob::LCS("abcfbc","abfcab"));
+                OUT(prob::LD("abc","ab"));
+                OUT(prob::LD("darling","airline"));
             }
             case 999 : {
                 return 1;
