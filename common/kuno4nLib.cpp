@@ -1,4 +1,4 @@
-
+    
 #include <cstdio>
 #include <cstdlib>
 #include <stdlib.h>
@@ -898,10 +898,10 @@ namespace mincost{
             while(SZ(que)){
                 P p = que.top(); que.pop();
                 int v = p.second;
-                if(dist[v] < p.first) continue;
+                if(dist[v] < p.first) continue; // costがdoubleの場合は、dist[v] < p.first - EPS とかにしておくと安全
                 REP(i, SZ(G[v])){
                     edge &e = G[v][i];
-                    if(e.cap > 0 && dist[e.to] > dist[v] + e.cost + h[v] - h[e.to]){
+                    if(e.cap > 0 && dist[e.to] > dist[v] + e.cost + h[v] - h[e.to]){ // costがdoubleの場合はここも
                         dist[e.to] = dist[v] + e.cost + h[v] - h[e.to];
                         prevv[e.to] = v;
                         preve[e.to] = i;
