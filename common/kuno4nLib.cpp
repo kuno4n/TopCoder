@@ -263,8 +263,8 @@ vector<int> divisor(long long l){
 //--------------------------------
 //素因数分解。O(√l)
 // l：0以上の整数
-map<int, int> prime_factor(long long l){
-    map<int, int> res;
+map<LL, int> prime_factor(long long l){
+    map<LL, int> res;
     for(long long i=2; i*i<=l; i++){
         while(l%i == 0){
             res[i]++;
