@@ -1,4 +1,3 @@
-CF_tmp.cpp    
 #include <cstdio>
 #include <cstdlib>
 #include <stdlib.h>
