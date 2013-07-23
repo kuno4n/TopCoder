@@ -1,4 +1,4 @@
-    
+CF_tmp.cpp    
 #include <cstdio>
 #include <cstdlib>
 #include <stdlib.h>
@@ -1454,7 +1454,7 @@ namespace count{
 		LL res;
 		
 		// 重複組合せ。nHm。
-		if(n == 0 || m == 0) res = 0;
+		if(m == 0) res = 0;
 		else{
 			makepas();
 			res = C[n+m-1][m-1]; // 3H5 だったら、8個のボールを5個の箱に、必ず一つ入れると考える
