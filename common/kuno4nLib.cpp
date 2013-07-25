@@ -1,3 +1,4 @@
+
 #include <cstdio>
 #include <cstdlib>
 #include <stdlib.h>
@@ -1197,16 +1198,16 @@ namespace count{
     LL C[MAX_N+1][MAX_M+1];
     
     void makepas(){
-		REP(i, MAX_N+1) REP(j, MAX_N+1) C[i][j] = 0;
-		C[0][0] = 1;
-        for(int i=1; i<=MAX_N; i++){
+		MSET(C, 0);
+		C[0][0] = C[1][0] = C[1][1] = 1;
+        for(int i=2; i<=MAX_N; i++){
             C[i][0] = 1;
             C[i][i] = 1;
             for(int j=1; j<i; j++){
                 C[i][j] = (C[i-1][j-1] + C[i-1][j]) % MOD;
             }
         }
-	}    
+	}
     
     void add(LL &a, LL b){
 		a = (a + b) % MOD;
