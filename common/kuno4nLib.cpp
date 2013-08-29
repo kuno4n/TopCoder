@@ -546,13 +546,15 @@ namespace seg_tree{
     void update(int a, int x, int node, int left, int right){
         if(a < left || right <= a) return;
         if(left+1 == right) {
-            tab[node] = min(x, tab[node]);
+            tab[node] = x;
             return;
         }
         int m = (left+right)/2;
-        update(a, x, node*2+1, left, m);
-        update(a, x, node*2+2, m, right);
-        tab[node] = min(tab[node*2+1], tab[node*2+2]);
+        int n1 = node*2 + 1;
+        int n2 = node*2 + 2;
+        update(a, x, n1, left, m);
+        update(a, x, n2, m, right);
+        tab[node] = min(tab[n1], tab[n2]);
     }
 }
 
