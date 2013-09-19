@@ -380,21 +380,32 @@ long long nCr(long long n, long long r)
 //（少なくとも0C0は1？）
 //nC0は1。
 namespace pas {
-    const int MAX_N = 1000;
-    LL C[MAX_N+1][MAX_N+1];
-    
-    void makepas(){
+//    const int MAX_N = 1000;
+//    LL C[MAX_N+1][MAX_N+1];
+//    
+//    void makepas(){
+//		MSET(C, 0);
+//		C[0][0] = C[1][0] = C[1][1] = 1;
+//        for(int i=2; i<=MAX_N; i++){
+//            C[i][0] = 1;
+//            C[i][i] = 1;
+//            for(int j=1; j<i; j++){
+//                C[i][j] = (C[i-1][j-1] + C[i-1][j]) % MOD;
+//            }
+//        }
+//    }
+
+	LL C[1010][1010];
+	
+	void makepas(){
 		MSET(C, 0);
-		C[0][0] = C[1][0] = C[1][1] = 1;
-        for(int i=2; i<=MAX_N; i++){
-            C[i][0] = 1;
-            C[i][i] = 1;
-            for(int j=1; j<i; j++){
-                C[i][j] = (C[i-1][j-1] + C[i-1][j]) % MOD;
-            }
-        }
-    }
+		REP(i, 1010){
+			C[i][0] = C[i][i] = 1;
+			for(int j = 1; j < i; j++) C[i][j] = (C[i-1][j-1] + C[i-1][j]) % MOD;
+		}
+	}
 }
+
 
 
 
