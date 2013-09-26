@@ -1673,6 +1673,55 @@ namespace prob{
 		return res;
 	}
 	
+	// LCSでO(n*m*(文字種類)) でOKなら、next関数を使っても良い。
+    int LCS2(string s1, string s2){
+		int next1[105][26];
+		int next2[105][26];
+		// next[i][c] : i文字目以降に文字cが現れる文字位置。
+		// abcab なら、next[0][a] = 1; next[1][a] = 4;
+		// i文字目以降に文字cがなければ、next[i][c] = -1。
+		
+		int n1 = SZ(s1), n2 = SZ(s2);
+		REP(i, 26) next1[n1][i] = -1, next2[n2][i] = -1;
+		
+		for(int i = n1 - 1; i >= 0; i--) REP(c, 26){
+			if(s1[i] == 'a'+c) next1[i][c] = i+1;
+			else next1[i][c] = next1[i+1][c];
+		}
+		for(int i = n2 - 1; i >= 0; i--) REP(c, 26){
+			if(s2[i] == 'a'+c) next2[i][c] = i+1;
+			else next2[i][c] = next2[i+1][c];
+		}
+		
+		// rec(a, b) は、s1[a], s2[b]以降でのLCS。
+		// recの中では、
+		// int na = next1[a][i], nb = next2[b][i];
+		// if(na != -1 && nb != -1) REP(i, 26) chmax(res, rec(na, nb) + 1); とかやる。
+		return rec(0, 0);
+	}
+	
+	// Aho-Corasick法。failure関数。
+	// ここでは、検索パターンはひとつ(p)のみ。failテーブル作成にO(SZ(p))。
+	// これを作っておけば、文書s内にpがあるかどうかをO(SZ(s))で可能。
+	void Aho(string p){
+		int n = SZ(p);
+		int fail[n][26];
+		
+		REP(i, n) REP(j, 26){
+			// pの先頭i文字がマッチした状態で、次の文字にjがきたとき、
+			// fail[i][j]文字がマッチ（当然、最大i+1文字）するということ。
+			fail[i][j] = 0;
+			for(int k = 0; k <= i; k++){
+				// k文字目～i文字目 + 1文字、がpの頭とマッチするかを考える
+				string s = p.substr(k, i-k) + string(1, 'a'+j);
+				if(p.find(s) == 0){
+					fail[i][j] = i-k+1;
+					break;
+				}
+			}
+		}
+	}
+	
 	// 編集距離 (レーベンシュタイン距離, Levenshtein Distance) 
 	// 削除と挿入でコスト１
 	// 例えば"darling" と"airline"であれば
