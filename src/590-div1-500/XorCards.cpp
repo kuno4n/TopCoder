@@ -26,7 +26,7 @@
 #include <stack>
 #include <queue>
 #include <numeric>
-#include "cout.h"
+//#include "cout.h"
 
 using namespace std;
 
@@ -47,10 +47,10 @@ template<class T> void chmax(T &t, T f) { if (t < f) t = f; }
 const int bits = 60;
 typedef vector < VI > mat;
 
-int rank(mat &A, VI &B){
+int _rank(mat &A, VI &B){
     int n = SZ(A[0]);
     int m = bits;
-    bool used[n]; MSET(used, false);
+    bool used[m]; MSET(used, false);
     int r = 0;
     REP(j, n){
         int i = 0;
@@ -69,13 +69,13 @@ int rank(mat &A, VI &B){
 
 LL cnt(VL &a, LL b){
     int n = SZ(a);
-    mat A(bits, n);
+    mat A(bits, VI(n));
     VI B(bits);
     REP(i, bits){
         REP(j, n) A[i][j] = ((a[j]>>i) & 1);
         B[i] = ((b>>i) & 1);
     }
-    int r = rank(A, B);
+    int r = _rank(A, B);
 //    if(r != -1) {OUT(a);OUT(b);OUT(r);}
     return (r == -1 ? 0 : (1LL << (n-r)));
 }
