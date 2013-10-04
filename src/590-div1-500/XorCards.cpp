@@ -26,7 +26,7 @@
 #include <stack>
 #include <queue>
 #include <numeric>
-#include "cout.h"
+//#include "cout.h"
 
 using namespace std;
 
@@ -69,7 +69,7 @@ int rank(mat &A, VI &B){
 
 LL cnt(VL &a, LL b){
     int n = SZ(a);
-    mat A(bits, n);
+    mat A(bits, VI(n));
     VI B(bits);
     REP(i, bits){
         REP(j, n) A[i][j] = ((a[j]>>i) & 1);
