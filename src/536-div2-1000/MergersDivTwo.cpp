@@ -51,10 +51,10 @@ class MergersDivTwo {
         double dp[n]; REP(i, n) dp[i] = -INF;
         sort(ALL(r));
         dp[0] = r[0];
-        REP(i, n-k+1) if(dp[i] != -INF) for(int j = i+k; j < n; j++){
+        REP(i, n-k+1) if(dp[i] != -INF) for(int j = i+k-1; j < n; j++){
             double tmp = dp[i];
             for(int k = i+1; k <= j; k++) tmp += r[k];
-            tmp /= j-i;
+            tmp /= j-i+1;
             chmax(dp[j], tmp);
         }
         return dp[n-1];
