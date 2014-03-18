@@ -357,7 +357,7 @@ long long fact(int n){
 
 long long modFact(int n){
     long long res = 1;
-    while(n!=1){
+    while(n > 1){
         res = (res*n) % MOD;
         n--;
     }
