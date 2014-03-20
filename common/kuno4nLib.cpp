@@ -472,13 +472,13 @@ long long modC(long long n, int k){
 namespace Union_Find{
     const int MAX_N = 1000;
 	int par[MAX_N];  //親
-	int rank[MAX_N]; //木の深さ
+	int _rank[MAX_N]; //木の深さ
     
 	// n要素で初期化
 	void init(int n){
         REP(i, n){
 			par[i] = i;
-            rank[i] = 0;
+            _rank[i] = 0;
 		}
 	}
 	//木の根を求める
@@ -491,10 +491,10 @@ namespace Union_Find{
 		x = find(x);
 		y = find(y);
 		if(x == y) return;
-		if(rank[x] < rank[y]) par[x] = y;
+		if(_rank[x] < _rank[y]) par[x] = y;
 		else{
 			par[y] = x;
-			if(rank[x] == rank[y]) rank[x]++;
+			if(_rank[x] == _rank[y]) _rank[x]++;
 		}
 	}
 	//xとyが同じ集合に属するか
