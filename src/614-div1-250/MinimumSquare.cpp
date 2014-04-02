@@ -41,24 +41,13 @@ public:
    long long minArea( vector <int> x, vector <int> y, int K ) {
        int n = SZ(x);
        LL res = (1LL << 62);
-       REP(i, n){
-           vector<LL> a, b, c, d;
-           REP(j, n){
-               LL diff = max(abs((LL)x[i]-x[j])+2, abs((LL)y[i]-y[j])+2);
-               if(x[i] <= x[j] && y[i] >= y[j]) a.push_back(diff);
-               if(x[i] <= x[j] && y[i] <= y[j]) b.push_back(diff);
-               if(x[i] >= x[j] && y[i] >= y[j]) c.push_back(diff);
-               if(x[i] >= x[j] && y[i] <= y[j]) d.push_back(diff);
-           }
-           sort(ALL(a));
-           sort(ALL(b));
-           sort(ALL(c));
-           sort(ALL(d));
-           if(SZ(a) >= K) chmin(res, a[K-1]*a[K-1]);
-           if(SZ(b) >= K) chmin(res, b[K-1]*b[K-1]);
-           if(SZ(c) >= K) chmin(res, c[K-1]*c[K-1]);
-           if(SZ(d) >= K) chmin(res, d[K-1]*d[K-1]);
-
+       REP(i, n) REP(j, n){
+           LL x1 = min(x[i], x[j]);
+           LL y1 = min(y[i], y[j]);
+           vector<LL> v;
+           REP(k, n) if(x[k] >= x1 && y[k] >= y1) v.push_back(max(x[k]-x1+2, y[k]-y1+2) );
+           sort(ALL(v));
+           if(SZ(v) >= K) chmin(res, v[K-1]*v[K-1]);
        }
        return res;
    }
@@ -187,16 +176,16 @@ namespace moj_harness {
 
 		// custom cases
 
-/*      case 5: {
-			int x[]                   = ;
-			int y[]                   = ;
-			int K                     = ;
-			long long expected__      = ;
+      case 5: {
+          int x[]                   = {0,0,9,-9};
+          int y[]                   = {9,-9,0,0};
+			int K                     = 4;
+			long long expected__      = 400;
 
 			clock_t start__           = clock();
 			long long received__      = MinimumSquare().minArea(vector <int>(x, x + (sizeof x / sizeof x[0])), vector <int>(y, y + (sizeof y / sizeof y[0])), K);
 			return verify_case(casenum__, expected__, received__, clock()-start__);
-		}*/
+		}
 /*      case 6: {
 			int x[]                   = ;
 			int y[]                   = ;
