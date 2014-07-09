@@ -14,7 +14,7 @@
 #include <stack>
 #include <queue>
 #include <numeric>
-#include "cout.h"
+//#include "cout.h"
 
 using namespace std;
 
@@ -663,7 +663,33 @@ namespace dijkstra{
     }
 }
 
-
+// O(|E|log|V|)
+namespace dijkstra2{
+    
+    typedef pair<LL, LL> P;
+    struct edge{LL to, cost;};
+    vector<edge> G[3010];
+    const LL INF = (1LL<<60);
+    const int MAX_V = 3010;
+    LL d[MAX_V];
+    
+    priority_queue<P, vector<P>, greater<P> > que;
+    fill(d, d+n, INF);
+    d[s] = 0;
+    que.push(P(0, s));
+    while(SZ(que)){
+        P p = que.top(); que.pop();
+        LL v = p.second;
+        if(d[v] < p.first) continue;
+        for(int i = 0; i < SZ(G[v]); i++){
+            edge e = G[v][i];
+            if(d[e.to] > d[v] + e.cost){
+                d[e.to] = d[v] + e.cost;
+                que.push(P(d[e.to], e.to));
+            }
+        }
+    }
+}
 
 //--------------------------------
 //ワーシャル-フロイド法による全点対最短路検出。
