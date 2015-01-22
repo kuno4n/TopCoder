@@ -1779,7 +1779,28 @@ namespace prob{
 		
 	}
 	
-	
+	// 5000万個ほどの候補の中から最も多く現れたものを
+    // 時間O(n), メモリ(1)で探しだす
+    // ボイヤー・ムーア法
+    int Boyer(){
+        int cnt = 0;
+        LL now;
+        LL buf = -1;
+        REP(i, n){
+            cin >> now;
+            if(cnt == 0) cnt++, buf = now;
+            else if(now == buf) cnt++;
+            else cnt--;
+        }
+        // この時点で、最も現れた値がbufに入っている
+        // 実際に何回現れたかを知るにはもう一度精査する必要がある
+        cnt = 0;
+        REP(i, n){
+            cin >> now; // todo
+            if(now == buf) cnt++;
+        }
+        return cnt;
+    }
 	
 	
 	//todo
