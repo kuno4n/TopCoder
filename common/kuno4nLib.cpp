@@ -985,27 +985,33 @@ namespace strongly_connected_component{
         G[from].push_back(to);
         rG[to].push_back(from);
     }
-    
+   
+    // vsには、もとのグラフの末端の葉っぱが vs[0]に入る。葉っぱが2つあればvs[1]にも。
     void dfs(int v){
         used[v] = true;
         REP(i, SZ(G[v])) if(!used[G[v][i]]) dfs(G[v][i]);
         vs.push_back(v);
     }
     
+    // cmp[v]: もとのグラフのvが、強連結成分分解したグラフのトポロジカル順で何番目のノードにあるか
     void rdfs(int v, int k){
         used[v] = true;
         cmp[v] = k;
         REP(i, SZ(rG[v])) if(!used[rG[v][i]]) rdfs(rG[v][i], k);
     }
     
-    // 強連結成分の数をついでに返す。
-	// 強連結成分の１番末尾の番号（cmp[]に入ってる）は、k-1なので注意。
+    // 強連結成分を作るとともに、強連結成分の数をついでに返す。
+	// 強連結成分のいちばん末尾の葉っぱの番号（cmp[]に入ってる）は、k-1。
+    // cmp[v] = k-1 であるようなv（閉路が葉っぱであればvはいくつかある）が、
+    // 強連結成分分解したグラフのトポロジカル順で最後尾に属する、もとのグラフのノード番号。
+    // cmp[v] = 0 であるようなvは、根に属する。
     int scc(){
         MSET(used, false);
         vs.clear();
         int k = 0;
         REP(v, V) if(!used[v]) dfs(v);
         MSET(used, false);
+        // もとのグラフの根っこから調べる。
         for(int i = SZ(vs) - 1; i >= 0; i--)
             if(!used[vs[i]]) rdfs(vs[i], k++);
         return k;
